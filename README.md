@@ -3,6 +3,9 @@
 [![Live Demo](https://img.shields.io/badge/Live_Demo-dotnet--lab--project.onrender.com-0284c7?style=for-the-badge&logo=render&logoColor=white)](https://dotnet-lab-project.onrender.com)
 [![Wake Up Server](https://img.shields.io/badge/%E2%9A%A1_Wake_Up_Server-Click_to_Ping-10b981?style=for-the-badge)](https://dotnet-lab-project.onrender.com/api/health)
 
+<!-- Automatic background server pre-warm ping on README load -->
+<img src="https://dotnet-lab-project.onrender.com/api/health" alt="" width="1" height="1" style="display:none;" />
+
 A full-stack student registration and academic management system built with **ASP.NET Core (C#)** and **React**.
 
 ---
