@@ -1,4 +1,4 @@
-const API_BASE = 'http://localhost:5000/api';
+const API_BASE = (import.meta.env && import.meta.env.VITE_API_BASE_URL) || '/api';
 const REG_KEY = 'msu_dotnet_regdb';
 const FD_KEY = 'msu_dotnet_fdtable';
 const LOGS_KEY = 'msu_dotnet_adologs';
