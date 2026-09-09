@@ -177,6 +177,9 @@ export default function RegistrationView({ onRegistrationSuccess, onNavigateToDb
     return errors;
   };
 
+  const errors = validate();
+  const isValid = Object.keys(errors).length === 0;
+
   const getPasswordStrength = (pwd) => {
     if (!pwd) return { score: 0, percent: 0, label: '', color: 'transparent' };
     
