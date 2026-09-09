@@ -60,7 +60,7 @@ export default function AdoNetInspectorModal({ isOpen, onClose, logs, onLogsUpda
                 ADO.NET & Backend Architecture Inspector
               </h3>
               <div style={{ fontSize: '0.725rem', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
-                Live Execution Trace | CSE 3515 Units 3 & 4
+                Live Execution Trace | .NET Data Architecture
               </div>
             </div>
           </div>

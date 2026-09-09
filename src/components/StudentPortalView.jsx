@@ -42,17 +42,17 @@ const courseCatalog = [
 ];
 
 const coreSubjects = [
-  { code: 'CSE 3515', name: 'Dot Net Technologies', credits: 5, required: true },
-  { code: 'CSE 3516', name: 'Mobile Application Development', credits: 4, required: true },
-  { code: 'CSE 3517', name: 'Computer Networks & Security', credits: 4, required: true },
-  { code: 'CSE 3518', name: 'Computer Graphics & Multimedia', credits: 3, required: true }
+  { code: 'IT-501', name: 'Dot Net Technologies', credits: 5, required: true },
+  { code: 'IT-502', name: 'Mobile Application Development', credits: 4, required: true },
+  { code: 'IT-503', name: 'Computer Networks & Security', credits: 4, required: true },
+  { code: 'IT-504', name: 'Database Management Systems', credits: 3, required: true }
 ];
 
 const availableElectives = [
-  { code: 'ELE 3521', name: 'Cyber Security & Forensics', credits: 3 },
-  { code: 'ELE 3522', name: 'Cloud Computing & Microservices', credits: 3 },
-  { code: 'ELE 3523', name: 'Web Applications & REST APIs', credits: 3 },
-  { code: 'ELE 3524', name: 'Computer Organization & Architecture (COA)', credits: 3 }
+  { code: 'ELE-511', name: 'Cyber Security & Forensics', credits: 3 },
+  { code: 'ELE-512', name: 'Cloud Computing & Microservices', credits: 3 },
+  { code: 'ELE-513', name: 'Web Applications & REST APIs', credits: 3 },
+  { code: 'ELE-514', name: 'Computer Organization & Architecture', credits: 3 }
 ];
 
 export default function StudentPortalView({ user, onLogout }) {

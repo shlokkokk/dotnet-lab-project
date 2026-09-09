@@ -1,7 +1,7 @@
 -- =============================================
 -- THE MAHARAJA SAYAJIRAO UNIVERSITY OF BARODA
--- POLYTECHNIC CAMPUS - IT DEPARTMENT
--- Subject: .NET Technologies (CSE 3515)
+-- POLYTECHNIC - INFORMATION TECHNOLOGY
+-- Course: .NET Technologies
 -- Database Architecture Script: dbo.regdb & dbo.fd_table
 -- =============================================
 
