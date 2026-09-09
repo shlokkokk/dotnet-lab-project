@@ -45,7 +45,7 @@ export default function LoginView({ onLoginSuccess, defaultUsername = '', defaul
     if (matched) {
       onLoginSuccess(matched);
     } else {
-      setErrorMessage('User does not exist or credentials invalid for selected role (ExecuteScalar count = 0).');
+      setErrorMessage('Invalid username/email or password for the selected role.');
     }
   };
 
@@ -78,7 +78,7 @@ export default function LoginView({ onLoginSuccess, defaultUsername = '', defaul
             Portal Authentication
           </h2>
           <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginTop: '2px' }}>
-            Session-backed authentication matching <code style={{ fontFamily: 'var(--font-mono)' }}>LoginPage.aspx</code>
+            Secure Session Authentication
           </p>
         </div>
 
@@ -144,6 +144,7 @@ export default function LoginView({ onLoginSuccess, defaultUsername = '', defaul
                 type={showPassword ? 'text' : 'password'}
                 className="form-input"
                 placeholder="Enter password"
+                style={{ paddingRight: '38px' }}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />

@@ -177,21 +177,35 @@ export default function RegistrationView({ onRegistrationSuccess, onNavigateToDb
     return errors;
   };
 
-  const errors = validate();
-  const isValid = Object.keys(errors).length === 0;
-
   const getPasswordStrength = (pwd) => {
-    if (!pwd) return { score: 0, label: 'None', color: 'var(--text-muted)' };
-    let score = 0;
-    if (pwd.length >= 6) score += 1;
-    if (pwd.length >= 10) score += 1;
-    if (/[A-Z]/.test(pwd)) score += 1;
-    if (/[0-9]/.test(pwd)) score += 1;
-    if (/[^A-Za-z0-9]/.test(pwd)) score += 1;
+    if (!pwd) return { score: 0, percent: 0, label: '', color: 'transparent' };
+    
+    let checks = 0;
+    const hasLower = /[a-z]/.test(pwd);
+    const hasUpper = /[A-Z]/.test(pwd);
+    const hasDigit = /[0-9]/.test(pwd);
+    const hasSpecial = /[^A-Za-z0-9]/.test(pwd);
+    const isLongEnough = pwd.length >= 8;
+    const isVeryLong = pwd.length >= 12;
 
-    if (score <= 2) return { score, label: 'Weak', color: 'var(--accent-rose)' };
-    if (score <= 4) return { score, label: 'Moderate', color: 'var(--accent-amber)' };
-    return { score, label: 'Strong', color: 'var(--accent-emerald)' };
+    if (hasLower) checks++;
+    if (hasUpper) checks++;
+    if (hasDigit) checks++;
+    if (hasSpecial) checks++;
+    if (isLongEnough) checks++;
+    if (isVeryLong) checks++;
+
+    if (pwd.length < 6) {
+      return { score: 1, percent: 25, label: 'Too Short (< 6 chars)', color: 'var(--accent-rose)' };
+    }
+
+    if (checks <= 2) {
+      return { score: 1, percent: 35, label: 'Weak', color: 'var(--accent-rose)' };
+    }
+    if (checks <= 4) {
+      return { score: 2, percent: 70, label: 'Moderate', color: 'var(--accent-amber)' };
+    }
+    return { score: 3, percent: 100, label: 'Strong', color: 'var(--accent-emerald)' };
   };
 
   const pwdStrength = getPasswordStrength(formData.password);
@@ -640,6 +654,7 @@ export default function RegistrationView({ onRegistrationSuccess, onNavigateToDb
                   type={showPassword ? 'text' : 'password'}
                   className={`form-input ${(touched.password || isSubmitted) && errors.password ? 'error' : ''}`}
                   placeholder="Min 6 characters"
+                  style={{ paddingRight: '38px' }}
                   value={formData.password}
                   onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                   onBlur={() => setTouched({ ...touched, password: true })}
@@ -653,6 +668,23 @@ export default function RegistrationView({ onRegistrationSuccess, onNavigateToDb
                   {showPassword ? <EyeOff size={14} /> : <Eye size={14} />}
                 </button>
               </div>
+              {formData.password && (
+                <div style={{ marginTop: '5px' }}>
+                  <div style={{ display: 'flex', gap: '4px', height: '4px' }}>
+                    {[1, 2, 3].map((step) => (
+                      <div
+                        key={step}
+                        style={{
+                          flex: 1,
+                          borderRadius: '2px',
+                          background: pwdStrength.score >= step ? pwdStrength.color : 'var(--border-subtle)',
+                          transition: 'background 0.2s ease'
+                        }}
+                      />
+                    ))}
+                  </div>
+                </div>
+              )}
               {(touched.password || isSubmitted) && errors.password && <span className="form-error">{errors.password}</span>}
             </div>
 
@@ -666,6 +698,7 @@ export default function RegistrationView({ onRegistrationSuccess, onNavigateToDb
                 type={showPassword ? 'text' : 'password'}
                 className={`form-input ${(touched.confirmpassword || isSubmitted) && errors.confirmpassword ? 'error' : touched.confirmpassword && !errors.confirmpassword ? 'valid' : ''}`}
                 placeholder="Confirm password"
+                style={{ paddingRight: '38px' }}
                 value={formData.confirmpassword}
                 onChange={(e) => setFormData({ ...formData, confirmpassword: e.target.value })}
                 onBlur={() => setTouched({ ...touched, confirmpassword: true })}
