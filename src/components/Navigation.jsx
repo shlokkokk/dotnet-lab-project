@@ -33,14 +33,28 @@ export default function Navigation({ activeTab, setActiveTab, currentUser, onLog
           
           {/* Brand identity with official MSU Logo */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', flexShrink: 0 }} onClick={() => setActiveTab('register')}>
-            <img 
-              src="/msu_logo.png" 
-              alt="MSU Baroda Logo" 
-              style={{ width: '36px', height: '36px', objectFit: 'contain' }}
-              onError={(e) => {
-                e.target.style.display = 'none';
-              }}
-            />
+            <div style={{
+              width: '36px',
+              height: '36px',
+              borderRadius: '8px',
+              background: 'linear-gradient(135deg, #0f172a, #1e293b)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              border: '1px solid var(--border-subtle)',
+              boxShadow: '0 2px 6px rgba(0, 0, 0, 0.15)',
+              flexShrink: 0,
+              padding: '4px'
+            }}>
+              <img 
+                src="/msu_logo.png" 
+                alt="MSU Baroda Logo" 
+                style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+                onError={(e) => {
+                  e.target.style.display = 'none';
+                }}
+              />
+            </div>
             <div>
               <div style={{ fontSize: '0.9rem', fontWeight: 700, color: 'var(--text-primary)', lineHeight: 1.2 }}>
                 MSU Polytechnic
