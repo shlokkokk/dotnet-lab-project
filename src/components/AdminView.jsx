@@ -65,12 +65,7 @@ export default function AdminView({ currentUser }) {
   const adminCount = users.filter((u) => u.usertype === 'Admin').length;
 
   const generateSqlScript = () => {
-    let sql = `-- =============================================\n`;
-    sql += `-- THE MAHARAJA SAYAJIRAO UNIVERSITY OF BARODA\n`;
-    sql += `-- Database Schema Export for [dbo].[regdb] & [dbo].[fd_table]\n`;
-    sql += `-- =============================================\n\n`;
-
-    sql += `CREATE TABLE [dbo].[regdb] (\n`;
+    let sql = `CREATE TABLE [dbo].[regdb] (\n`;
     sql += `    [id] INT IDENTITY(1,1) PRIMARY KEY,\n`;
     sql += `    [name] VARCHAR(50) NOT NULL,\n`;
     sql += `    [address] VARCHAR(255) NOT NULL,\n`;

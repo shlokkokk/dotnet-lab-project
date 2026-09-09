@@ -1,10 +1,3 @@
--- =============================================
--- THE MAHARAJA SAYAJIRAO UNIVERSITY OF BARODA
--- POLYTECHNIC - INFORMATION TECHNOLOGY
--- Course: .NET Technologies
--- Database Architecture Script: dbo.regdb & dbo.fd_table
--- =============================================
-
 USE [master];
 GO
 

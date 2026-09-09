@@ -735,14 +735,7 @@ namespace MSU_DotNet_Web
         category: 'dal',
         tag: 'SQL Server Schema DDL',
         summary: 'SQL Server Table creation script defining [dbo].[regdb], [dbo].[fd_table], constraints, and seed data.',
-        code: `-- =============================================
--- THE MAHARAJA SAYAJIRAO UNIVERSITY OF BARODA
--- Faculty of Technology and Engineering | Polytechnic
--- Department of Information Technology (.NET Technologies)
--- Database Schema for Experiments 14 & 15
--- =============================================
-
-USE [master]
+        code: `USE [master]
 GO
 
 IF NOT EXISTS (SELECT name FROM sys.databases WHERE name = N'MSU_AcademicDB')
