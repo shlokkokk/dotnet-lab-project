@@ -251,7 +251,13 @@ app.MapPost("/api/electives/{username}", (string username, [FromBody] List<strin
     return Results.Ok(new { success = true, count = electives.Count });
 });
 
-app.Run("http://localhost:5000");
+app.UseDefaultFiles();
+app.UseStaticFiles();
+app.MapFallbackToFile("index.html");
+
+var port = Environment.GetEnvironmentVariable("PORT") ?? "5000";
+var url = Environment.GetEnvironmentVariable("ASPNETCORE_URLS") ?? $"http://0.0.0.0:{port}";
+app.Run(url);
 
 public record UserDto(string Name, string Address, string Birthdate, string Gender, string Hobbies, string Age, string Username, string Password, string Confirmpassword, string Email, string Usertype, string Mobile);
 public record LoginDto(string Username, string Password, string Usertype);
