@@ -8,192 +8,164 @@ export default function Navigation({ activeTab, setActiveTab, currentUser, onLog
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
   useEffect(() => {
-    const ping = async () => {
-      const res = await checkServerHealth();
-      setServerOnline(!!res);
-    };
+    const ping = async () => { const r = await checkServerHealth(); setServerOnline(!!r); };
     ping();
-    const interval = setInterval(ping, 2000);
-    return () => clearInterval(interval);
+    const iv = setInterval(ping, 2000);
+    return () => clearInterval(iv);
   }, []);
-
-  const handleLogoutClick = () => {
-    setShowLogoutConfirm(true);
-  };
-
-  const handleConfirmLogout = () => {
-    setShowLogoutConfirm(false);
-    onLogout();
-  };
 
   return (
     <>
       <header className="nav-header">
+
+        {/* Top bar */}
         <div className="nav-container">
-          
-          {/* Brand Identity */}
-          <div 
-            style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', flexShrink: 0 }} 
+
+          {/* Brand */}
+          <div
+            style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', flexShrink: 0, userSelect: 'none' }}
             onClick={() => setActiveTab('register')}
-            title="Go to Registration"
           >
             <div style={{
-              width: '38px',
-              height: '38px',
-              borderRadius: 'var(--radius-sm)',
-              background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              border: '1px solid var(--border-medium)',
-              boxShadow: '0 2px 8px rgba(0, 0, 0, 0.25)',
-              flexShrink: 0,
-              padding: '4px'
+              width: '36px', height: '36px', borderRadius: '10px',
+              background: theme === 'light' ? 'rgba(0,0,0,0.04)' : 'rgba(255,255,255,0.06)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              border: '1px solid var(--border-soft)',
+              boxShadow: '0 2px 8px rgba(0,0,0,0.12)',
+              flexShrink: 0, padding: '3px'
             }}>
-              <img 
-                src="/msu_logo.png" 
-                alt="MSU Logo" 
+              <img
+                src={theme === 'light' ? '/msu_logo_black.png' : '/msu_logo_white.png'}
+                alt="MSU Baroda"
                 style={{ width: '100%', height: '100%', objectFit: 'contain' }}
-                onError={(e) => {
-                  e.target.style.display = 'none';
-                }}
               />
             </div>
-            <div>
-              <div style={{ fontSize: '0.925rem', fontWeight: 700, color: 'var(--text-primary)', lineHeight: 1.2, letterSpacing: '-0.01em' }}>
+            <div style={{ display: 'flex', flexDirection: 'column' }}>
+              <span style={{ fontSize: '0.9rem', fontWeight: 750, color: 'var(--text-primary)', lineHeight: 1.2, letterSpacing: '-0.01em' }}>
                 MSU Polytechnic
-              </div>
-              <div style={{ fontSize: '0.675rem', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
-                Academic &amp; Database System
-              </div>
+              </span>
+              <span style={{ fontSize: '0.625rem', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', letterSpacing: '0.04em' }}>
+                ACADEMIC PORTAL
+              </span>
             </div>
           </div>
 
-          {/* Right Action Controls */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            
-            {/* Live Server Indicator Pill */}
-            <div 
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '7px',
-                background: serverOnline ? 'rgba(16, 185, 129, 0.1)' : 'var(--bg-tertiary)',
-                border: `1px solid ${serverOnline ? 'rgba(16, 185, 129, 0.25)' : 'var(--border-subtle)'}`,
-                padding: '4px 10px',
-                borderRadius: 'var(--radius-full)',
-                fontSize: '0.725rem',
-                fontFamily: 'var(--font-mono)',
-                color: serverOnline ? 'var(--accent-emerald)' : 'var(--text-muted)',
-                userSelect: 'none'
-              }}
-              title={serverOnline ? 'Connected to C# ASP.NET Core Engine on Port 5000' : 'Operating in Browser LocalDB Storage'}
+          {/* Right side */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+
+            {/* Server badge */}
+            <div style={{
+              display: 'inline-flex', alignItems: 'center', gap: '6px',
+              background: serverOnline ? 'rgba(16,185,129,0.08)' : 'transparent',
+              border: `1px solid ${serverOnline ? 'rgba(16,185,129,0.22)' : 'var(--border-subtle)'}`,
+              padding: '4px 10px', borderRadius: 'var(--r-full)',
+              fontSize: '0.7rem', fontFamily: 'var(--font-mono)',
+              color: serverOnline ? 'var(--accent-emerald)' : 'var(--text-muted)',
+              userSelect: 'none', transition: 'all 0.3s ease'
+            }}
+              title={serverOnline ? 'ASP.NET Core on Port 5000' : 'LocalDB mode'}
             >
               <div className={`pulse-dot ${serverOnline ? 'online' : 'offline'}`} />
               <span style={{ fontWeight: 600 }}>{serverOnline ? '.NET Live' : 'LocalDB'}</span>
             </div>
 
-            {/* Theme Toggle */}
-            <button 
+            {/* Theme toggle */}
+            <button
               onClick={toggleTheme}
-              className="btn btn-outline"
+              className="btn btn-outline btn-icon"
               title="Toggle theme"
-              style={{ width: '34px', height: '34px', padding: 0, borderRadius: 'var(--radius-sm)' }}
               aria-label="Toggle color theme"
             >
-              {theme === 'dark' ? <Sun size={15} style={{ color: 'var(--accent-amber)' }} /> : <Moon size={15} style={{ color: 'var(--accent-indigo)' }} />}
+              {theme === 'dark'
+                ? <Sun size={15} style={{ color: 'var(--accent-amber)' }} />
+                : <Moon size={15} style={{ color: 'var(--accent-indigo)' }} />}
             </button>
 
-            {/* User State / Sign In Button */}
+            {/* Auth */}
             {currentUser ? (
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <span className="badge badge-cyan" style={{ fontSize: '0.7rem', padding: '4px 10px' }}>
-                  <User size={12} />
+                <span className="badge badge-cyan" style={{ fontSize: '0.68rem', padding: '4px 10px' }}>
+                  <User size={11} />
                   {currentUser.username}
                 </span>
-                <button 
-                  onClick={handleLogoutClick}
-                  className="btn btn-danger btn-sm"
+                <button
+                  onClick={() => setShowLogoutConfirm(true)}
+                  className="btn btn-danger btn-icon-sm"
                   title="Sign out"
-                  style={{ padding: '6px 8px' }}
                 >
                   <LogOut size={13} />
                 </button>
               </div>
             ) : (
-              <button 
+              <button
                 onClick={() => setActiveTab('login')}
                 className="btn btn-primary btn-sm"
-                style={{ padding: '6px 14px' }}
               >
                 <LogIn size={13} />
                 Sign In
               </button>
             )}
-
           </div>
-
         </div>
 
-        {/* Scrollable Subnav Tab Strip */}
+        {/* Tab strip */}
         <div className="subnav-bar">
           <div className="subnav-container">
-            <div className="nav-tabs-wrapper">
-              <button 
+            <nav className="nav-tabs-wrapper" aria-label="Main navigation">
+              <button
                 className={`nav-tab-btn ${activeTab === 'register' ? 'active' : ''}`}
                 onClick={() => setActiveTab('register')}
               >
-                <UserPlus size={14} />
+                <UserPlus size={13} />
                 Registration
               </button>
 
-              <button 
+              <button
                 className={`nav-tab-btn ${activeTab === 'admin' ? 'active' : ''}`}
                 onClick={() => setActiveTab('admin')}
               >
-                <Database size={14} />
-                Database (dbo.regdb)
+                <Database size={13} />
+                Database
               </button>
 
-              {currentUser && currentUser.usertype === 'Student' && (
-                <button 
+              {currentUser?.usertype === 'Student' && (
+                <button
                   className={`nav-tab-btn ${activeTab === 'student' ? 'active' : ''}`}
                   onClick={() => setActiveTab('student')}
                 >
-                  <BookOpen size={14} />
+                  <BookOpen size={13} />
                   Student Portal
                 </button>
               )}
 
-              <button 
+              <button
                 className={`nav-tab-btn ${activeTab === 'feedback' ? 'active' : ''}`}
                 onClick={() => setActiveTab('feedback')}
               >
-                <MessageSquare size={14} />
-                Feedback (dbo.fd_table)
+                <MessageSquare size={13} />
+                Feedback
               </button>
 
-              <button 
+              <button
                 className={`nav-tab-btn ${activeTab === 'backend' ? 'active' : ''}`}
                 onClick={() => setActiveTab('backend')}
               >
-                <Terminal size={14} />
-                Backend Architecture
+                <Terminal size={13} />
+                Backend
               </button>
-            </div>
+            </nav>
           </div>
         </div>
       </header>
 
-      {/* Logout Confirmation Dialog */}
       <ConfirmModal
         isOpen={showLogoutConfirm}
-        title="Sign Out Confirmation"
-        message={`Are you sure you want to end your current active session as "${currentUser?.username || 'user'}"?`}
+        title="Sign Out"
+        message={`End your session as "${currentUser?.username || 'user'}"?`}
         confirmText="Sign Out"
-        cancelText="Stay Signed In"
-        isDanger={true}
-        onConfirm={handleConfirmLogout}
+        cancelText="Stay"
+        isDanger
+        onConfirm={() => { setShowLogoutConfirm(false); onLogout(); }}
         onCancel={() => setShowLogoutConfirm(false)}
       />
     </>
