@@ -173,53 +173,51 @@ export default function BackendExplorerView() {
     <div style={{ maxWidth: '1100px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '16px' }} className="fade-up">
 
       {/* ── Top Header Card ── */}
-      <div className="card-panel" style={{ padding: '16px 20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+      <div className="card-panel backend-top-header" style={{ padding: '14px 18px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', minWidth: 0 }}>
           <div style={{
-            width: '42px', height: '42px', borderRadius: 'var(--r-sm)',
+            width: '38px', height: '38px', borderRadius: 'var(--r-sm)',
             background: 'linear-gradient(135deg, rgba(2,132,199,0.18) 0%, rgba(99,102,241,0.18) 100%)',
             color: 'var(--accent-cyan)', display: 'flex', alignItems: 'center', justifyContent: 'center',
             border: '1px solid rgba(56,189,248,0.25)', flexShrink: 0
           }}>
-            <Server size={20} />
+            <Server size={18} />
           </div>
-          <div>
-            <div style={{ fontSize: '1.05rem', fontWeight: 750, color: 'var(--text-primary)', letterSpacing: '-0.01em' }}>
-              Backend Architecture &amp; Source Explorer
+          <div style={{ minWidth: 0 }}>
+            <div style={{ fontSize: '0.96rem', fontWeight: 750, color: 'var(--text-primary)', letterSpacing: '-0.01em', lineHeight: 1.25 }}>
+              Backend &amp; Source Explorer
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '2px', flexWrap: 'wrap' }}>
-              <div className={`pulse-dot ${serverOnline ? 'online' : 'offline'}`} />
-              <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
-                {serverOnline ? 'ASP.NET Core 9.0 · Live on Port 5000' : 'Client SQLite Mode'}
-              </span>
-              <span style={{ color: 'var(--border-soft)' }}>·</span>
-              <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
-                {allFiles.length} Solution Files Loaded
-              </span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '3px', fontSize: '0.72rem', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
+              <div className={`pulse-dot ${serverOnline ? 'online' : 'offline'}`} style={{ flexShrink: 0 }} />
+              <span style={{ whiteSpace: 'nowrap' }}>{serverOnline ? 'ASP.NET Core 9.0' : 'LocalDB'}</span>
+              <span>·</span>
+              <span style={{ whiteSpace: 'nowrap' }}>{allFiles.length} Solution Files</span>
             </div>
           </div>
         </div>
 
         {/* Tab switcher */}
-        <div style={{ display: 'flex', gap: '8px' }}>
+        <div className="backend-main-tabs" style={{ display: 'flex', gap: '6px' }}>
           <button
             onClick={() => { setActiveMainTab('code'); }}
             className={`btn btn-sm ${activeMainTab === 'code' ? 'btn-primary' : 'btn-outline'}`}
+            style={{ fontSize: '0.75rem', height: '32px', padding: '0 12px' }}
           >
-            <Code2 size={13} />
+            <Code2 size={12} />
             Source Files
-            <span className="badge badge-cyan" style={{ fontSize: '0.625rem', padding: '1px 6px' }}>
+            <span className="badge badge-cyan" style={{ fontSize: '0.6rem', padding: '0 5px' }}>
               {allFiles.length}
             </span>
           </button>
           <button
             onClick={() => setActiveMainTab('console')}
             className={`btn btn-sm ${activeMainTab === 'console' ? 'btn-primary' : 'btn-outline'}`}
+            style={{ fontSize: '0.75rem', height: '32px', padding: '0 12px' }}
           >
-            <Activity size={13} />
+            <Activity size={12} />
             ADO.NET Feed
             {liveLogs.length > 0 && (
-              <span className="badge badge-slate" style={{ fontSize: '0.625rem', padding: '1px 6px' }}>
+              <span className="badge badge-slate" style={{ fontSize: '0.6rem', padding: '0 5px' }}>
                 {liveLogs.length}
               </span>
             )}
@@ -588,7 +586,7 @@ export default function BackendExplorerView() {
                       borderBottom: '1px solid rgba(56,189,248,0.15)',
                       display: 'flex', alignItems: 'flex-start', gap: '8px', fontSize: '0.75rem', color: 'var(--text-secondary)'
                     }}>
-                      <Sparkles size={14} style={{ color: 'var(--accent-cyan)', flexShrink: 0, marginTop: '2px' }} />
+                      <FileText size={14} style={{ color: 'var(--accent-cyan)', flexShrink: 0, marginTop: '2px' }} />
                       <span>{activeFile.summary}</span>
                     </div>
                   )}
@@ -843,6 +841,20 @@ export default function BackendExplorerView() {
           align-items: start;
         }
         @media (max-width: 768px) {
+          .backend-top-header {
+            flex-direction: column;
+            align-items: stretch !important;
+            gap: 12px !important;
+            padding: 12px 14px !important;
+          }
+          .backend-main-tabs {
+            width: 100%;
+            display: flex;
+          }
+          .backend-main-tabs button {
+            flex: 1;
+            justify-content: center;
+          }
           .search-scope-row {
             flex-direction: column;
             align-items: stretch;
