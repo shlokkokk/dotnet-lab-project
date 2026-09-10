@@ -347,12 +347,12 @@ body {
 .nav-tab-btn {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 7px;
   font-family: var(--font-sans);
-  font-size: 0.8rem;
-  font-weight: 550;
+  font-size: 0.815rem;
+  font-weight: 500;
   padding: 6px 14px;
-  border-radius: var(--r-full);
+  border-radius: var(--r-sm);
   border: 1px solid transparent;
   cursor: pointer;
   white-space: nowrap;
@@ -361,20 +361,39 @@ body {
   transition: all 0.18s var(--ease-spring);
   flex-shrink: 0;
   letter-spacing: 0.01em;
+  position: relative;
 }
 
 .nav-tab-btn:hover {
   color: var(--text-primary);
-  background: var(--bg-tertiary);
+  background: rgba(255, 255, 255, 0.04);
   border-color: var(--border-subtle);
 }
 
 .nav-tab-btn.active {
-  color: #fff;
-  background: linear-gradient(135deg, var(--accent-blue) 0%, var(--accent-indigo) 100%);
-  border-color: transparent;
-  box-shadow: 0 2px 12px rgba(2,132,199,0.35), inset 0 1px 0 rgba(255,255,255,0.15);
+  color: #ffffff;
+  background: linear-gradient(180deg, rgba(56, 189, 248, 0.14) 0%, rgba(99, 102, 241, 0.06) 100%);
+  border: 1px solid rgba(56, 189, 248, 0.35);
+  border-top-color: rgba(56, 189, 248, 0.65);
+  box-shadow: 0 0 16px rgba(56, 189, 248, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.18);
   font-weight: 650;
+}
+
+.nav-tab-btn.active svg {
+  color: var(--accent-cyan);
+  filter: drop-shadow(0 0 6px rgba(56, 189, 248, 0.5));
+}
+
+.nav-tab-btn.active::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 15%;
+  right: 15%;
+  height: 2px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, transparent, var(--accent-cyan), #818cf8, transparent);
+  box-shadow: 0 0 8px rgba(56, 189, 248, 0.9);
 }
 
 /* ─────────────────────────────────────────
