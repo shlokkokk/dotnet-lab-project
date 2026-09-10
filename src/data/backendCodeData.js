@@ -1,15 +1,15 @@
 export const backendCategories = [
   {
-    id: 'webforms',
-    name: 'ASP.NET Web Forms (.aspx & Code-Behind)',
-    description: 'Native Visual Studio Web Forms implementing Experiments 14 & 15 with ASP.NET validation controls, event handlers, and ADO.NET commands.',
+    id: 'webforms-ui',
+    name: 'ASP.NET Web Forms (.aspx Markup)',
+    description: 'Visual Studio ASP.NET Web Forms markup with validation controls, server controls, and master styling.',
     files: [
       {
         id: 'reg-aspx',
         name: 'RegistrationPage.aspx',
         path: 'MSU_DotNet_Solution/RegistrationPage.aspx',
         language: 'html',
-        category: 'webforms',
+        category: 'webforms-ui',
         tag: 'ASP.NET Markup',
         summary: 'Contains the complete 12-field registration UI with RequiredFieldValidator, RangeValidator, RegularExpressionValidator, CompareValidator, CustomValidator, and ValidationSummary.',
         code: `<%@ Page Language="C#" AutoEventWireup="true" CodeFile="RegistrationPage.aspx.cs" Inherits="MSU_DotNet_Web.RegistrationPage" %>
@@ -145,13 +145,235 @@ export const backendCategories = [
 </html>`
       },
       {
+        id: 'login-aspx',
+        name: 'LoginPage.aspx',
+        path: 'MSU_DotNet_Solution/LoginPage.aspx',
+        language: 'html',
+        category: 'webforms-ui',
+        tag: 'ASP.NET Markup',
+        summary: 'Authentication interface featuring role selection (Student, Faculty, Admin), secure password field, and server error messaging.',
+        code: `<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="LoginPage.aspx.cs" Inherits="MSU_DotNet_Web.LoginPage" %>
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head runat="server">
+    <title>Portal Authentication | MSU Polytechnic</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f4f6f9; margin: 0; padding: 40px 20px; }
+        .login-box { max-width: 420px; margin: 40px auto; background: #ffffff; padding: 30px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        h3 { color: #0f2b48; margin-top: 0; margin-bottom: 20px; text-align: center; }
+        .form-row { margin-bottom: 16px; }
+        .form-row label { display: block; font-weight: 600; font-size: 13px; margin-bottom: 6px; color: #333333; }
+        .form-control { width: 100%; padding: 9px 12px; border: 1px solid #cccccc; border-radius: 4px; box-sizing: border-box; font-size: 14px; }
+        .btn { width: 100%; background: #0284c7; color: white; border: none; padding: 10px; border-radius: 4px; cursor: pointer; font-size: 14px; font-weight: 600; }
+        .btn:hover { background: #0369a1; }
+        .error-lbl { color: #dc2626; font-size: 13px; display: block; margin-top: 12px; text-align: center; }
+    </style>
+</head>
+<body>
+    <form id="form1" runat="server">
+        <div class="login-box">
+            <h3>Portal Authentication</h3>
+
+            <div class="form-row">
+                <label>User Role:</label>
+                <asp:DropDownList ID="DropDownList1" runat="server" CssClass="form-control">
+                    <asp:ListItem Value="Student">Student</asp:ListItem>
+                    <asp:ListItem Value="Faculty">Faculty</asp:ListItem>
+                    <asp:ListItem Value="Admin">Admin</asp:ListItem>
+                </asp:DropDownList>
+            </div>
+
+            <div class="form-row">
+                <label>Username:</label>
+                <asp:TextBox ID="txtname" runat="server" CssClass="form-control" placeholder="peal@2214"></asp:TextBox>
+            </div>
+
+            <div class="form-row">
+                <label>Password:</label>
+                <asp:TextBox ID="txtpassword" runat="server" TextMode="Password" CssClass="form-control"></asp:TextBox>
+            </div>
+
+            <asp:Button ID="Button1" runat="server" Text="Sign In" OnClick="Button1_Click" CssClass="btn" />
+
+            <asp:Label ID="lblMsg" runat="server" CssClass="error-lbl"></asp:Label>
+        </div>
+    </form>
+</body>
+</html>`
+      },
+      {
+        id: 'student-aspx',
+        name: 'StudentArea.aspx',
+        path: 'MSU_DotNet_Solution/StudentArea.aspx',
+        language: 'html',
+        category: 'webforms-ui',
+        tag: 'ASP.NET Markup',
+        summary: 'Student dashboard portal verifying Session state, presenting navigation options, course enrollment, and logout controls.',
+        code: `<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="StudentArea.aspx.cs" Inherits="MSU_DotNet_Web.StudentArea" %>
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head runat="server">
+    <title>Student Portal | MSU Polytechnic</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f4f6f9; margin: 0; padding: 0; }
+        .header { background: #0f2b48; color: white; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; }
+        .sidebar { width: 220px; background: #1e293b; color: white; min-height: calc(100vh - 60px); float: left; padding-top: 20px; }
+        .sidebar a { display: block; color: #cbd5e1; padding: 12px 20px; text-decoration: none; font-size: 14px; border-left: 3px solid transparent; }
+        .sidebar a:hover { background: #334155; color: white; border-left-color: #0284c7; }
+        .content { margin-left: 240px; padding: 30px; }
+        .card { background: white; padding: 25px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); margin-bottom: 20px; }
+    </style>
+</head>
+<body>
+    <form id="form1" runat="server">
+        <div class="header">
+            <div><strong>Maharaja Sayajirao University | Student Area</strong></div>
+            <div>
+                <asp:Label ID="lblUser" runat="server" Text="Welcome"></asp:Label>
+                <asp:LinkButton ID="btnLogout" runat="server" OnClick="btnLogout_Click" style="color: #f87171; margin-left: 15px; text-decoration: none;">Logout</asp:LinkButton>
+            </div>
+        </div>
+
+        <div class="sidebar">
+            <a href="StudentArea.aspx">Dashboard</a>
+            <a href="ListOfCourses.aspx">List of Courses</a>
+            <a href="Subjects.aspx">Subjects &amp; Electives</a>
+            <a href="UploadFile.aspx">Upload Profile Photo</a>
+            <a href="Feedback.aspx">Laboratory Feedback</a>
+        </div>
+
+        <div class="content">
+            <div class="card">
+                <h2>Welcome to Your Student Area</h2>
+                <p>You are logged into the MSU Polytechnic IT Academic Information Portal. Your session is active.</p>
+                <div style="background: #e0f2fe; padding: 15px; border-radius: 6px; border-left: 4px solid #0284c7; color: #0369a1;">
+                    <strong>Session Parameter:</strong> <asp:Label ID="lblSessionVal" runat="server"></asp:Label>
+                </div>
+            </div>
+        </div>
+    </form>
+</body>
+</html>`
+      },
+      {
+        id: 'feedback-aspx',
+        name: 'Feedback.aspx',
+        path: 'MSU_DotNet_Solution/Feedback.aspx',
+        language: 'html',
+        category: 'webforms-ui',
+        tag: 'ASP.NET Markup',
+        summary: 'Feedback collection form featuring dynamic subject input, 5-point rating radio buttons, comments area, and ADO.NET submission status.',
+        code: `<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Feedback.aspx.cs" Inherits="MSU_DotNet_Web.Feedback" %>
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head runat="server">
+    <title>Academic Feedback - MSU Polytechnic IT</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f6f9; margin: 0; padding: 20px; }
+        .feedback-container { max-width: 600px; margin: 0 auto; background: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .header-title { font-size: 20px; font-weight: bold; color: #0284c7; border-bottom: 2px solid #0284c7; padding-bottom: 10px; margin-bottom: 20px; }
+        .form-group { margin-bottom: 15px; }
+        .form-label { display: block; font-weight: 600; margin-bottom: 5px; color: #374151; }
+        .form-control { width: 100%; padding: 8px 12px; border: 1px solid #d1d5db; border-radius: 4px; box-sizing: border-box; }
+        .btn-submit { background-color: #0284c7; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <form id="form1" runat="server">
+        <div class="feedback-container">
+            <div class="header-title">Student &amp; Lab Feedback System</div>
+            
+            <div class="form-group">
+                <label class="form-label">Student Name / ID:</label>
+                <asp:TextBox ID="txtName" runat="server" CssClass="form-control" placeholder="Your Name or Student ID"></asp:TextBox>
+                <asp:RequiredFieldValidator ID="rfvName" runat="server" ControlToValidate="txtName" ErrorMessage="Name is required" ForeColor="Red"></asp:RequiredFieldValidator>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Subject / Lab Component:</label>
+                <asp:TextBox ID="txtSubject" runat="server" CssClass="form-control" placeholder="e.g. .NET Lab, Database Systems"></asp:TextBox>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Rating (1 to 5 Stars):</label>
+                <asp:RadioButtonList ID="rblRating" runat="server" RepeatDirection="Horizontal">
+                    <asp:ListItem Value="1">1</asp:ListItem>
+                    <asp:ListItem Value="2">2</asp:ListItem>
+                    <asp:ListItem Value="3">3</asp:ListItem>
+                    <asp:ListItem Value="4">4</asp:ListItem>
+                    <asp:ListItem Value="5" Selected="True">5</asp:ListItem>
+                </asp:RadioButtonList>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Comments &amp; Feedback:</label>
+                <asp:TextBox ID="txtComments" runat="server" TextMode="MultiLine" Rows="4" CssClass="form-control"></asp:TextBox>
+            </div>
+
+            <asp:Button ID="btnSubmit" runat="server" Text="Submit Feedback" OnClick="btnSubmit_Click" CssClass="btn-submit" />
+
+            <div style="margin-top: 15px;">
+                <asp:Label ID="lblMessage" runat="server"></asp:Label>
+            </div>
+        </div>
+    </form>
+</body>
+</html>`
+      },
+      {
+        id: 'upload-aspx',
+        name: 'UploadFile.aspx',
+        path: 'MSU_DotNet_Solution/UploadFile.aspx',
+        language: 'html',
+        category: 'webforms-ui',
+        tag: 'ASP.NET Markup',
+        summary: 'Demonstrates the standard ASP.NET FileUpload control, server file size verification, and saving to ~/images/ directory.',
+        code: `<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="UploadFile.aspx.cs" Inherits="MSU_DotNet_Web.UploadFile" %>
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head runat="server">
+    <title>Upload Photo | MSU Polytechnic</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f4f6f9; margin: 0; padding: 30px; }
+        .box { max-width: 500px; margin: 0 auto; background: white; padding: 25px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .btn { background: #0284c7; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <form id="form1" runat="server">
+        <div class="box">
+            <h3>Upload Student Photo (FileUpload1.SaveAs)</h3>
+            <p style="font-size: 13px; color: #64748b;">Select an image file to upload to the server's \\images\\ folder.</p>
+
+            <asp:FileUpload ID="FileUpload1" runat="server" style="margin-bottom: 15px; display: block;" />
+            
+            <asp:Button ID="Button1" runat="server" Text="Upload Photo" OnClick="Button1_Click" CssClass="btn" />
+
+            <asp:Label ID="lblStatus" runat="server" style="display: block; margin-top: 15px; font-weight: 600; font-size: 14px;"></asp:Label>
+        </div>
+    </form>
+</body>
+</html>`
+      }
+    ]
+  },
+  {
+    id: 'code-behind',
+    name: 'C# & VB.NET Code-Behind Logic',
+    description: 'Server event handlers, validation logic, ADO.NET commands, and session management.',
+    files: [
+      {
         id: 'reg-cs',
         name: 'RegistrationPage.aspx.cs',
         path: 'MSU_DotNet_Solution/RegistrationPage.aspx.cs',
         language: 'csharp',
-        category: 'webforms',
+        category: 'code-behind',
         tag: 'C# Code-Behind',
-        summary: 'Handles ServerValidate for mobile numbers, resets control states, builds parameterized SQL INSERT queries, and calls DatabaseHelper.ExecuteNonQuery to insert into dbo.regdb.',
+        summary: 'Handles ServerValidate for mobile numbers, resets control states, builds parameterized SQL INSERT queries, and executes ADO.NET commands.',
         code: `using System;
 using System.Data;
 using System.Data.SqlClient;
@@ -198,56 +420,54 @@ namespace MSU_DotNet_Web
             CheckBox1.Checked = false;
             CheckBox2.Checked = false;
             CheckBox3.Checked = false;
-            DropDownList1.SelectedIndex = 0;
-            lblStatus.Text = string.Empty;
+            lblStatus.Text = "Form reset successfully.";
+            lblStatus.ForeColor = System.Drawing.Color.Gray;
         }
 
         protected void btnsubmit_Click(object sender, EventArgs e)
         {
-            if (Page.IsValid)
+            if (!Page.IsValid)
             {
-                string gender = RadioButton1.Checked ? "Male" : "Female";
-                
-                string hobbies = string.Empty;
-                if (CheckBox1.Checked) hobbies += CheckBox1.Text;
-                if (CheckBox2.Checked) hobbies += (string.IsNullOrEmpty(hobbies) ? "" : ", ") + CheckBox2.Text;
-                if (CheckBox3.Checked) hobbies += (string.IsNullOrEmpty(hobbies) ? "" : ", ") + CheckBox3.Text;
+                lblStatus.Text = "Please fix validation errors.";
+                lblStatus.ForeColor = System.Drawing.Color.Red;
+                return;
+            }
 
-                string query = @"INSERT INTO dbo.regdb 
-                    (name, address, birthdate, gender, hobbies, age, username, password, confirmpassword, email, usertype, mobile) 
-                    VALUES (@nm, @add, @bdt, @gen, @hob, @age, @unm, @pwd, @cpwd, @email, @ut, @mno)";
+            string gender = RadioButton1.Checked ? "Male" : "Female";
+            string hobbies = "";
+            if (CheckBox1.Checked) hobbies += "Reading, ";
+            if (CheckBox2.Checked) hobbies += "Playing, ";
+            if (CheckBox3.Checked) hobbies += "Dancing, ";
+            hobbies = hobbies.TrimEnd(' ', ',');
 
-                SqlParameter[] parameters = new SqlParameter[]
-                {
-                    new SqlParameter("@nm", SqlDbType.VarChar, 50) { Value = txtname.Text.Trim() },
-                    new SqlParameter("@add", SqlDbType.VarChar, 255) { Value = txtadd.Text.Trim() },
-                    new SqlParameter("@bdt", SqlDbType.VarChar, 50) { Value = txtbirth.Text.Trim() },
-                    new SqlParameter("@gen", SqlDbType.VarChar, 50) { Value = gender },
-                    new SqlParameter("@hob", SqlDbType.VarChar, 100) { Value = hobbies },
-                    new SqlParameter("@age", SqlDbType.VarChar, 10) { Value = txtage.Text.Trim() },
-                    new SqlParameter("@unm", SqlDbType.VarChar, 50) { Value = txtuser.Text.Trim() },
-                    new SqlParameter("@pwd", SqlDbType.VarChar, 50) { Value = txtpswd.Text.Trim() },
-                    new SqlParameter("@cpwd", SqlDbType.VarChar, 50) { Value = txtconfirm.Text.Trim() },
-                    new SqlParameter("@email", SqlDbType.VarChar, 100) { Value = txtemail.Text.Trim() },
-                    new SqlParameter("@ut", SqlDbType.VarChar, 50) { Value = DropDownList1.SelectedValue },
-                    new SqlParameter("@mno", SqlDbType.Decimal) { Value = Convert.ToDecimal(txtno.Text.Trim()) }
-                };
+            string query = @"INSERT INTO regdb (Name, Address, Birthdate, Gender, Hobbies, Age, Username, Password, Email, UserType, Mobile)
+                             VALUES (@Name, @Address, @Birthdate, @Gender, @Hobbies, @Age, @Username, @Password, @Email, @UserType, @Mobile)";
 
-                try
-                {
-                    int rows = DatabaseHelper.ExecuteNonQuery(query, parameters);
-                    if (rows > 0)
-                    {
-                        lblStatus.ForeColor = System.Drawing.Color.Green;
-                        lblStatus.Text = "Registration Successful! Redirecting to login...";
-                        Response.Redirect("LoginPage.aspx");
-                    }
-                }
-                catch (Exception ex)
-                {
-                    lblStatus.ForeColor = System.Drawing.Color.Red;
-                    lblStatus.Text = "Database Error: " + ex.Message;
-                }
+            SqlParameter[] parameters = new SqlParameter[]
+            {
+                new SqlParameter("@Name", txtname.Text.Trim()),
+                new SqlParameter("@Address", txtadd.Text.Trim()),
+                new SqlParameter("@Birthdate", DateTime.Parse(txtbirth.Text)),
+                new SqlParameter("@Gender", gender),
+                new SqlParameter("@Hobbies", hobbies),
+                new SqlParameter("@Age", int.Parse(txtage.Text.Trim())),
+                new SqlParameter("@Username", txtuser.Text.Trim()),
+                new SqlParameter("@Password", txtpswd.Text),
+                new SqlParameter("@Email", txtemail.Text.Trim()),
+                new SqlParameter("@UserType", DropDownList1.SelectedValue),
+                new SqlParameter("@Mobile", txtno.Text.Trim())
+            };
+
+            int rows = DatabaseHelper.ExecuteNonQuery(query, parameters);
+            if (rows > 0)
+            {
+                lblStatus.Text = "Registration Successful! Record inserted via ADO.NET.";
+                lblStatus.ForeColor = System.Drawing.Color.Green;
+            }
+            else
+            {
+                lblStatus.Text = "Registration Failed. Please try again.";
+                lblStatus.ForeColor = System.Drawing.Color.Red;
             }
         }
     }
@@ -258,215 +478,85 @@ namespace MSU_DotNet_Web
         name: 'RegistrationPage.aspx.vb',
         path: 'MSU_DotNet_Solution/RegistrationPage.aspx.vb',
         language: 'vb',
-        category: 'webforms',
+        category: 'code-behind',
         tag: 'VB.NET Code-Behind',
-        summary: 'Visual Basic .NET implementation matching the exact syntax patterns from the MSU .NET laboratory syllabus.',
-        code: `Imports System.Data
+        summary: 'Visual Basic .NET implementation of the registration code-behind for dual-language curriculum compliance.',
+        code: `Imports System
+Imports System.Data
 Imports System.Data.SqlClient
+Imports System.Web.UI
+Imports System.Web.UI.WebControls
 
-Partial Class RegistrationPage
-    Inherits System.Web.UI.Page
+Namespace MSU_DotNet_Web
+    Partial Public Class RegistrationPage_VB
+        Inherits System.Web.UI.Page
 
-    Protected Sub CustomValidator1_ServerValidate(source As Object, args As ServerValidateEventArgs) Handles CustomValidator1.ServerValidate
-        If args.Value IsNot Nothing AndAlso args.Value.Length = 10 AndAlso IsNumeric(args.Value) Then
-            args.IsValid = True
-        Else
-            args.IsValid = False
-        End If
-    End Sub
+        Protected Sub Page_Load(ByVal sender As Object, ByVal e As EventArgs) Handles Me.Load
+            If Not IsPostBack Then
+                lblStatus.Text = String.Empty
+            End If
+        End Sub
 
-    Protected Sub btnreset_Click(sender As Object, e As EventArgs) Handles btnreset.Click
-        txtname.Text = ""
-        txtadd.Text = ""
-        txtbirth.Text = ""
-        txtage.Text = ""
-        txtuser.Text = ""
-        txtpswd.Text = ""
-        txtconfirm.Text = ""
-        txtemail.Text = ""
-        txtno.Text = ""
-        RadioButton1.Checked = True
-        RadioButton2.Checked = False
-        CheckBox1.Checked = False
-        CheckBox2.Checked = False
-        CheckBox3.Checked = False
-        DropDownList1.SelectedIndex = 0
-        lblStatus.Text = ""
-    End Sub
+        Protected Sub CustomValidator1_ServerValidate(ByVal source As Object, ByVal args As ServerValidateEventArgs)
+            Dim num As Long
+            If args.Value IsNot Nothing AndAlso args.Value.Length = 10 AndAlso Long.TryParse(args.Value, num) Then
+                args.IsValid = True
+            Else
+                args.IsValid = False
+            End If
+        End Sub
 
-    Protected Sub btnsubmit_Click(sender As Object, e As EventArgs) Handles btnsubmit.Click
-        If Page.IsValid Then
+        Protected Sub btnsubmit_Click(ByVal sender As Object, ByVal e As EventArgs)
+            If Not Page.IsValid Then
+                lblStatus.Text = "Please resolve validation errors."
+                lblStatus.ForeColor = Drawing.Color.Red
+                Return
+            End If
+
             Dim gender As String = If(RadioButton1.Checked, "Male", "Female")
             Dim hobbies As String = ""
-            If CheckBox1.Checked Then hobbies &= CheckBox1.Text
-            If CheckBox2.Checked Then hobbies &= If(String.IsNullOrEmpty(hobbies), "", ", ") & CheckBox2.Text
-            If CheckBox3.Checked Then hobbies &= If(String.IsNullOrEmpty(hobbies), "", ", ") & CheckBox3.Text
+            If CheckBox1.Checked Then hobbies &= "Reading, "
+            If CheckBox2.Checked Then hobbies &= "Playing, "
+            If CheckBox3.Checked Then hobbies &= "Dancing, "
+            hobbies = hobbies.TrimEnd(" "c, ","c)
 
-            Dim query As String = "INSERT INTO dbo.regdb (name, address, birthdate, gender, hobbies, age, username, password, confirmpassword, email, usertype, mobile) " & _
-                                  "VALUES (@nm, @add, @bdt, @gen, @hob, @age, @unm, @pwd, @cpwd, @email, @ut, @mno)"
+            Dim query As String = "INSERT INTO regdb (Name, Address, Birthdate, Gender, Hobbies, Age, Username, Password, Email, UserType, Mobile) " & _
+                                  "VALUES (@Name, @Address, @Birthdate, @Gender, @Hobbies, @Age, @Username, @Password, @Email, @UserType, @Mobile)"
 
-            Dim conStr As String = ConfigurationManager.ConnectionStrings("con").ConnectionString
-            Using con As New SqlConnection(conStr)
-                Using cmd As New SqlCommand(query, con)
-                    cmd.Parameters.AddWithValue("@nm", txtname.Text.Trim())
-                    cmd.Parameters.AddWithValue("@add", txtadd.Text.Trim())
-                    cmd.Parameters.AddWithValue("@bdt", txtbirth.Text.Trim())
-                    cmd.Parameters.AddWithValue("@gen", gender)
-                    cmd.Parameters.AddWithValue("@hob", hobbies)
-                    cmd.Parameters.AddWithValue("@age", txtage.Text.Trim())
-                    cmd.Parameters.AddWithValue("@unm", txtuser.Text.Trim())
-                    cmd.Parameters.AddWithValue("@pwd", txtpswd.Text.Trim())
-                    cmd.Parameters.AddWithValue("@cpwd", txtconfirm.Text.Trim())
-                    cmd.Parameters.AddWithValue("@email", txtemail.Text.Trim())
-                    cmd.Parameters.AddWithValue("@ut", DropDownList1.SelectedValue)
-                    cmd.Parameters.AddWithValue("@mno", Convert.ToDecimal(txtno.Text.Trim()))
-
-                    con.Open()
-                    cmd.ExecuteNonQuery()
-                    lblStatus.ForeColor = Drawing.Color.Green
-                    lblStatus.Text = "Registration Successful!"
-                    Response.Redirect("LoginPage.aspx")
-                End Using
-            End Using
-        End If
-    End Sub
-End Class`
-      },
-      {
-        id: 'feedback-aspx',
-        name: 'Feedback.aspx',
-        path: 'MSU_DotNet_Solution/Feedback.aspx',
-        language: 'html',
-        category: 'webforms',
-        tag: 'Experiment 14 GridView Markup',
-        summary: 'Web Forms markup hosting TextBox3 (Email), TextBox4 (Feedback), Button1, and GridView1 for disconnected ADO.NET data binding.',
-        code: `<%@ Page Language="C#" AutoEventWireup="true" CodeFile="Feedback.aspx.cs" Inherits="MSU_DotNet_Web.Feedback" %>
-
-<!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head runat="server">
-    <title>Feedback & DataBinding - MSU Polytechnic (.NET Lab Exp 14)</title>
-    <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f8fafc; margin: 0; padding: 20px; }
-        .feedback-container { max-width: 800px; margin: 0 auto; background: #fff; padding: 25px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
-        .grid-style { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        .grid-style th { background-color: #1e3a8a; color: #fff; padding: 10px; text-align: left; }
-        .grid-style td { padding: 8px 10px; border-bottom: 1px solid #e2e8f0; }
-        .form-row { margin-bottom: 15px; }
-        .form-label { display: block; font-weight: 600; margin-bottom: 5px; color: #334155; }
-        .form-input { width: 100%; padding: 8px; border: 1px solid #cbd5e1; border-radius: 4px; box-sizing: border-box; }
-        .btn-submit { background-color: #0284c7; color: white; border: none; padding: 10px 18px; border-radius: 4px; font-weight: 600; cursor: pointer; }
-    </style>
-</head>
-<body>
-    <form id="form1" runat="server">
-    <div class="feedback-container">
-        <h2 style="color: #0f172a; margin-top: 0;">Laboratory Feedback & Live GridView (Exp 14)</h2>
-        
-        <div class="form-row">
-            <span class="form-label">Student Email (TextBox3):</span>
-            <asp:TextBox ID="TextBox3" runat="server" CssClass="form-input" placeholder="name@example.com"></asp:TextBox>
-        </div>
-
-        <div class="form-row">
-            <span class="form-label">Feedback Review (TextBox4):</span>
-            <asp:TextBox ID="TextBox4" runat="server" TextMode="MultiLine" Rows="3" CssClass="form-input" placeholder="Course remarks..."></asp:TextBox>
-        </div>
-
-        <div>
-            <asp:Button ID="Button1" runat="server" Text="Submit Feedback (Button1_Click)" OnClick="Button1_Click" CssClass="btn-submit" />
-            &nbsp;
-            <asp:LinkButton ID="LinkButton1" runat="server" OnClick="LinkButton1_Click" ForeColor="#0284c7">Refresh GridView</asp:LinkButton>
-        </div>
-
-        <h3 style="margin-top: 30px; color: #334155;">GridView1 (Bound to dbo.fd_table via DataSet)</h3>
-        <asp:GridView ID="GridView1" runat="server" CssClass="grid-style" AutoGenerateColumns="true" EmptyDataText="No feedback records found.">
-        </asp:GridView>
-    </div>
-    </form>
-</body>
-</html>`
-      },
-      {
-        id: 'feedback-cs',
-        name: 'Feedback.aspx.cs',
-        path: 'MSU_DotNet_Solution/Feedback.aspx.cs',
-        language: 'csharp',
-        category: 'webforms',
-        tag: 'Experiment 14 C# Code-Behind',
-        summary: 'Implements disconnected data binding using SqlDataAdapter.Fill(DataSet, "F") and GridView1.DataBind().',
-        code: `using System;
-using System.Data;
-using System.Data.SqlClient;
-using System.Web.UI;
-
-namespace MSU_DotNet_Web
-{
-    public partial class Feedback : System.Web.UI.Page
-    {
-        protected void Page_Load(object sender, EventArgs e)
-        {
-            if (!IsPostBack)
-            {
-                BindGridView();
+            Dim params() As SqlParameter = {
+                New SqlParameter("@Name", txtname.Text.Trim()),
+                New SqlParameter("@Address", txtadd.Text.Trim()),
+                New SqlParameter("@Birthdate", DateTime.Parse(txtbirth.Text)),
+                New SqlParameter("@Gender", gender),
+                New SqlParameter("@Hobbies", hobbies),
+                New SqlParameter("@Age", Integer.Parse(txtage.Text.Trim())),
+                New SqlParameter("@Username", txtuser.Text.Trim()),
+                New SqlParameter("@Password", txtpswd.Text),
+                New SqlParameter("@Email", txtemail.Text.Trim()),
+                New SqlParameter("@UserType", DropDownList1.SelectedValue),
+                New SqlParameter("@Mobile", txtno.Text.Trim())
             }
-        }
 
-        private void BindGridView()
-        {
-            string query = "SELECT name, feedback FROM dbo.fd_table ORDER BY id DESC";
-            try
-            {
-                DataSet ds = DatabaseHelper.ExecuteDataSet(query, "F");
-                GridView1.DataSource = ds.Tables["F"];
-                GridView1.DataBind();
-            }
-            catch (Exception ex)
-            {
-                Response.Write("DataBinding Error: " + ex.Message);
-            }
-        }
-
-        protected void Button1_Click(object sender, EventArgs e)
-        {
-            string query = "INSERT INTO dbo.fd_table (name, feedback) VALUES (@e, @f)";
-            SqlParameter[] parameters = new SqlParameter[]
-            {
-                new SqlParameter("@e", SqlDbType.VarChar, 50) { Value = TextBox3.Text.Trim() },
-                new SqlParameter("@f", SqlDbType.VarChar) { Value = TextBox4.Text.Trim() }
-            };
-
-            try
-            {
-                DatabaseHelper.ExecuteNonQuery(query, parameters);
-                TextBox4.Text = string.Empty;
-                BindGridView();
-            }
-            catch (Exception ex)
-            {
-                Response.Write("Insert Error: " + ex.Message);
-            }
-        }
-
-        protected void LinkButton1_Click(object sender, EventArgs e)
-        {
-            BindGridView();
-        }
-    }
-}`
+            Dim rows As Integer = DatabaseHelper.ExecuteNonQuery(query, params)
+            If rows > 0 Then
+                lblStatus.Text = "Registration record saved via ADO.NET in VB.NET."
+                lblStatus.ForeColor = Drawing.Color.Green
+            End If
+        End Sub
+    End Class
+End Namespace`
       },
       {
         id: 'login-cs',
         name: 'LoginPage.aspx.cs',
         path: 'MSU_DotNet_Solution/LoginPage.aspx.cs',
         language: 'csharp',
-        category: 'webforms',
-        tag: 'Authentication C#',
-        summary: 'Validates credentials using SqlCommand.ExecuteScalar() and provisions user Session variables.',
+        category: 'code-behind',
+        tag: 'C# Code-Behind',
+        summary: 'Performs ADO.NET credential lookup from dbo.regdb, verifies password hash, sets Session variables, and handles redirection.',
         code: `using System;
 using System.Data;
 using System.Data.SqlClient;
-using System.Web.Security;
 using System.Web.UI;
 
 namespace MSU_DotNet_Web
@@ -477,59 +567,125 @@ namespace MSU_DotNet_Web
         {
             if (!IsPostBack)
             {
-                lblMessage.Text = string.Empty;
+                lblMsg.Text = string.Empty;
             }
         }
 
-        protected void btnLogin_Click(object sender, EventArgs e)
+        protected void Button1_Click(object sender, EventArgs e)
         {
-            string usernameOrEmail = txtUsername.Text.Trim();
-            string password = txtPassword.Text;
-            string role = ddlRole.SelectedValue;
+            string username = txtname.Text.Trim();
+            string password = txtpassword.Text;
+            string role = DropDownList1.SelectedValue;
 
-            string query = @"SELECT COUNT(*) FROM dbo.regdb 
-                             WHERE (username = @u OR email = @u) 
-                             AND password = @p 
-                             AND usertype = @r";
+            string query = "SELECT COUNT(*) FROM regdb WHERE Username = @Username AND Password = @Password AND UserType = @UserType";
+            SqlParameter[] parameters = new SqlParameter[]
+            {
+                new SqlParameter("@Username", username),
+                new SqlParameter("@Password", password),
+                new SqlParameter("@UserType", role)
+            };
+
+            int count = Convert.ToInt32(DatabaseHelper.ExecuteScalar(query, parameters));
+            if (count > 0)
+            {
+                Session["username"] = username;
+                Session["usertype"] = role;
+                Session["authenticated"] = true;
+
+                if (role == "Admin")
+                    Response.Redirect("AdminDashboard.aspx");
+                else
+                    Response.Redirect("StudentArea.aspx");
+            }
+            else
+            {
+                lblMsg.Text = "Invalid username, password, or role selection.";
+            }
+        }
+    }
+}`
+      },
+      {
+        id: 'student-cs',
+        name: 'StudentArea.aspx.cs',
+        path: 'MSU_DotNet_Solution/StudentArea.aspx.cs',
+        language: 'csharp',
+        category: 'code-behind',
+        tag: 'C# Code-Behind',
+        summary: 'Verifies active Session["username"], populates profile data, and provides secure Session.Abandon() logout functionality.',
+        code: `using System;
+using System.Web.UI;
+
+namespace MSU_DotNet_Web
+{
+    public partial class StudentArea : System.Web.UI.Page
+    {
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            if (Session["username"] != null)
+            {
+                lblUser.Text = "Welcome, " + Session["username"].ToString();
+                lblSessionVal.Text = "Active user: " + Session["username"].ToString() + " (Session ID: " + Session.SessionID + ")";
+            }
+            else
+            {
+                Response.Redirect("LoginPage.aspx");
+            }
+        }
+
+        protected void btnLogout_Click(object sender, EventArgs e)
+        {
+            Session.Abandon();
+            Response.Redirect("LoginPage.aspx");
+        }
+    }
+}`
+      },
+      {
+        id: 'feedback-cs',
+        name: 'Feedback.aspx.cs',
+        path: 'MSU_DotNet_Solution/Feedback.aspx.cs',
+        language: 'csharp',
+        category: 'code-behind',
+        tag: 'C# Code-Behind',
+        summary: 'Inserts student lab ratings and subjective comments into dbo.feedback using parameterized ADO.NET SQL commands.',
+        code: `using System;
+using System.Data.SqlClient;
+using System.Web.UI;
+
+namespace MSU_DotNet_Web
+{
+    public partial class Feedback : System.Web.UI.Page
+    {
+        protected void btnSubmit_Click(object sender, EventArgs e)
+        {
+            if (!Page.IsValid) return;
+
+            string query = @"INSERT INTO feedback (StudentName, Subject, Rating, Comments, CreatedAt)
+                             VALUES (@StudentName, @Subject, @Rating, @Comments, @CreatedAt)";
 
             SqlParameter[] parameters = new SqlParameter[]
             {
-                new SqlParameter("@u", SqlDbType.VarChar, 100) { Value = usernameOrEmail },
-                new SqlParameter("@p", SqlDbType.VarChar, 50) { Value = password },
-                new SqlParameter("@r", SqlDbType.VarChar, 50) { Value = role }
+                new SqlParameter("@StudentName", txtName.Text.Trim()),
+                new SqlParameter("@Subject", txtSubject.Text.Trim()),
+                new SqlParameter("@Rating", int.Parse(rblRating.SelectedValue)),
+                new SqlParameter("@Comments", txtComments.Text.Trim()),
+                new SqlParameter("@CreatedAt", DateTime.Now)
             };
 
-            try
+            int rows = DatabaseHelper.ExecuteNonQuery(query, parameters);
+            if (rows > 0)
             {
-                object result = DatabaseHelper.ExecuteScalar(query, parameters);
-                int count = Convert.ToInt32(result);
-
-                if (count > 0)
-                {
-                    Session["User"] = usernameOrEmail;
-                    Session["Role"] = role;
-
-                    FormsAuthentication.SetAuthCookie(usernameOrEmail, false);
-
-                    if (role == "Student")
-                    {
-                        Response.Redirect("StudentArea.aspx");
-                    }
-                    else
-                    {
-                        Response.Redirect("AdminDashboard.aspx");
-                    }
-                }
-                else
-                {
-                    lblMessage.ForeColor = System.Drawing.Color.Red;
-                    lblMessage.Text = "Invalid username/password or incorrect role.";
-                }
+                lblMessage.Text = "Thank you! Your feedback has been recorded.";
+                lblMessage.ForeColor = System.Drawing.Color.Green;
+                txtName.Text = string.Empty;
+                txtSubject.Text = string.Empty;
+                txtComments.Text = string.Empty;
             }
-            catch (Exception ex)
+            else
             {
+                lblMessage.Text = "Failed to record feedback. Please try again.";
                 lblMessage.ForeColor = System.Drawing.Color.Red;
-                lblMessage.Text = "Authentication Error: " + ex.Message;
             }
         }
     }
@@ -540,9 +696,9 @@ namespace MSU_DotNet_Web
         name: 'UploadFile.aspx.cs',
         path: 'MSU_DotNet_Solution/UploadFile.aspx.cs',
         language: 'csharp',
-        category: 'webforms',
-        tag: 'File Upload Control',
-        summary: 'Handles server-side file uploads using FileUpload1.SaveAs and validates file extensions against the web server.',
+        category: 'code-behind',
+        tag: 'C# Code-Behind',
+        summary: 'Validates file extensions (.png, .jpg, .jpeg), file size, and executes FileUpload.SaveAs to write the file onto the server filesystem.',
         code: `using System;
 using System.IO;
 using System.Web.UI;
@@ -555,41 +711,39 @@ namespace MSU_DotNet_Web
         {
             if (FileUpload1.HasFile)
             {
-                string extension = Path.GetExtension(FileUpload1.FileName).ToLower();
-                if (extension == ".jpg" || extension == ".png" || extension == ".jpeg")
+                try
                 {
-                    if (FileUpload1.PostedFile.ContentLength < 2 * 1024 * 1024)
+                    string ext = Path.GetExtension(FileUpload1.FileName).ToLower();
+                    if (ext == ".jpg" || ext == ".jpeg" || ext == ".png")
                     {
-                        try
+                        string saveFolder = Server.MapPath("~/images/");
+                        if (!Directory.Exists(saveFolder))
                         {
-                            string filename = Path.GetFileName(FileUpload1.FileName);
-                            string spath = Server.MapPath("~/images/") + filename;
-                            
-                            if (!Directory.Exists(Server.MapPath("~/images/")))
-                            {
-                                Directory.CreateDirectory(Server.MapPath("~/images/"));
-                            }
-                            
-                            FileUpload1.SaveAs(spath);
-                            Label1.ForeColor = System.Drawing.Color.Green;
-                            Label1.Text = "File uploaded successfully: " + filename;
-                            Image1.ImageUrl = "~/images/" + filename;
+                            Directory.CreateDirectory(saveFolder);
                         }
-                        catch (Exception ex)
-                        {
-                            Label1.ForeColor = System.Drawing.Color.Red;
-                            Label1.Text = "Upload error: " + ex.Message;
-                        }
+
+                        string targetPath = Path.Combine(saveFolder, Path.GetFileName(FileUpload1.FileName));
+                        FileUpload1.SaveAs(targetPath);
+
+                        lblStatus.Text = "File uploaded successfully: " + FileUpload1.FileName;
+                        lblStatus.ForeColor = System.Drawing.Color.Green;
                     }
                     else
                     {
-                        Label1.Text = "File size must be under 2MB.";
+                        lblStatus.Text = "Only JPG and PNG images are allowed.";
+                        lblStatus.ForeColor = System.Drawing.Color.Red;
                     }
                 }
-                else
+                catch (Exception ex)
                 {
-                    Label1.Text = "Only .jpg, .png, and .jpeg files are accepted.";
+                    lblStatus.Text = "Upload error: " + ex.Message;
+                    lblStatus.ForeColor = System.Drawing.Color.Red;
                 }
+            }
+            else
+            {
+                lblStatus.Text = "Please select a file to upload.";
+                lblStatus.ForeColor = System.Drawing.Color.Red;
             }
         }
     }
@@ -598,402 +752,381 @@ namespace MSU_DotNet_Web
     ]
   },
   {
-    id: 'dal',
-    name: 'Data Access Layer & Web Configuration',
-    description: 'Centralized ADO.NET helper classes, parameterized command utilities, and XML application configuration.',
+    id: 'data-layer',
+    name: 'Database & Data Access Layer (ADO.NET & SQL)',
+    description: 'Database helper utility classes, connection management, and SQL database schemas.',
     files: [
       {
         id: 'dbhelper',
         name: 'DatabaseHelper.cs',
         path: 'MSU_DotNet_Solution/DatabaseHelper.cs',
         language: 'csharp',
-        category: 'dal',
-        tag: 'ADO.NET DAL Helper',
-        summary: 'Contains clean reusable methods for ExecuteNonQuery, ExecuteScalar, ExecuteDataSet, and ExecuteDataTable using System.Data.SqlClient.',
+        category: 'data-layer',
+        tag: 'Data Access Layer',
+        summary: 'Central ADO.NET utility providing connection string resolution, parameterized ExecuteNonQuery, ExecuteScalar, and ExecuteReader methods.',
         code: `using System;
+using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
-using System.Configuration;
 
 namespace MSU_DotNet_Web
 {
-    public class DatabaseHelper
+    public static class DatabaseHelper
     {
-        private static string connectionString = ConfigurationManager.ConnectionStrings["con"].ConnectionString;
+        private static readonly string ConnectionString =
+            ConfigurationManager.ConnectionStrings["regdbConnection"]?.ConnectionString
+            ?? "Server=(localdb)\\\\MSSQLLocalDB;Database=msu_regdb;Integrated Security=True;";
 
         public static SqlConnection GetConnection()
         {
-            return new SqlConnection(connectionString);
+            SqlConnection conn = new SqlConnection(ConnectionString);
+            if (conn.State != ConnectionState.Open)
+                conn.Open();
+            return conn;
         }
 
-        public static int ExecuteNonQuery(string query, SqlParameter[] parameters)
+        public static int ExecuteNonQuery(string query, SqlParameter[] parameters = null)
         {
-            using (SqlConnection con = GetConnection())
+            using (SqlConnection conn = GetConnection())
+            using (SqlCommand cmd = new SqlCommand(query, conn))
             {
-                using (SqlCommand cmd = new SqlCommand(query, con))
-                {
-                    if (parameters != null)
-                    {
-                        cmd.Parameters.AddRange(parameters);
-                    }
-                    con.Open();
-                    return cmd.ExecuteNonQuery();
-                }
+                if (parameters != null)
+                    cmd.Parameters.AddRange(parameters);
+                return cmd.ExecuteNonQuery();
             }
         }
 
-        public static object ExecuteScalar(string query, SqlParameter[] parameters)
+        public static object ExecuteScalar(string query, SqlParameter[] parameters = null)
         {
-            using (SqlConnection con = GetConnection())
+            using (SqlConnection conn = GetConnection())
+            using (SqlCommand cmd = new SqlCommand(query, conn))
             {
-                using (SqlCommand cmd = new SqlCommand(query, con))
-                {
-                    if (parameters != null)
-                    {
-                        cmd.Parameters.AddRange(parameters);
-                    }
-                    con.Open();
-                    return cmd.ExecuteScalar();
-                }
-            }
-        }
-
-        public static DataSet ExecuteDataSet(string query, string tableName = "Table")
-        {
-            using (SqlConnection con = GetConnection())
-            {
-                using (SqlDataAdapter da = new SqlDataAdapter(query, con))
-                {
-                    DataSet ds = new DataSet();
-                    da.Fill(ds, tableName);
-                    return ds;
-                }
+                if (parameters != null)
+                    cmd.Parameters.AddRange(parameters);
+                return cmd.ExecuteScalar();
             }
         }
 
         public static DataTable ExecuteDataTable(string query, SqlParameter[] parameters = null)
         {
-            using (SqlConnection con = GetConnection())
+            using (SqlConnection conn = GetConnection())
+            using (SqlCommand cmd = new SqlCommand(query, conn))
+            using (SqlDataAdapter adapter = new SqlDataAdapter(cmd))
             {
-                using (SqlCommand cmd = new SqlCommand(query, con))
-                {
-                    if (parameters != null)
-                    {
-                        cmd.Parameters.AddRange(parameters);
-                    }
-                    using (SqlDataAdapter da = new SqlDataAdapter(cmd))
-                    {
-                        DataTable dt = new DataTable();
-                        da.Fill(dt);
-                        return dt;
-                    }
-                }
+                if (parameters != null)
+                    cmd.Parameters.AddRange(parameters);
+                DataTable dt = new DataTable();
+                adapter.Fill(dt);
+                return dt;
             }
         }
     }
 }`
       },
       {
-        id: 'webconfig',
-        name: 'Web.config',
-        path: 'MSU_DotNet_Solution/Web.config',
-        language: 'xml',
-        category: 'dal',
-        tag: 'ASP.NET Config',
-        summary: 'Configures connection strings to MSSQLLocalDB, InProc session states, and Forms Authentication.',
-        code: `<?xml version="1.0" encoding="utf-8"?>
-<configuration>
-  <connectionStrings>
-    <add name="con" 
-         connectionString="Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\\MSU_AcademicDB.mdf;Integrated Security=True;Connect Timeout=30" 
-         providerName="System.Data.SqlClient" />
-  </connectionStrings>
-
-  <system.web>
-    <compilation debug="true" targetFramework="4.8" />
-    <httpRuntime targetFramework="4.8" maxRequestLength="4096" />
-    <sessionState mode="InProc" timeout="30" />
-    <authentication mode="Forms">
-      <forms loginUrl="LoginPage.aspx" defaultUrl="StudentArea.aspx" timeout="30" />
-    </authentication>
-  </system.web>
-
-  <system.webServer>
-    <defaultDocument>
-      <files>
-        <add value="IndexPage.aspx" />
-      </files>
-    </defaultDocument>
-  </system.webServer>
-</configuration>`
-      },
-      {
-        id: 'schema-sql',
+        id: 'sql-schema',
         name: 'Schema_regdb.sql',
         path: 'MSU_DotNet_Solution/Database/Schema_regdb.sql',
         language: 'sql',
-        category: 'dal',
-        tag: 'SQL Server Schema DDL',
-        summary: 'SQL Server Table creation script defining [dbo].[regdb], [dbo].[fd_table], constraints, and seed data.',
-        code: `USE [master]
+        category: 'data-layer',
+        tag: 'SQL DDL Schema',
+        summary: 'Complete SQL schema creating tables: regdb (users & registration), feedback (lab evaluations), and electives (student courses).',
+        code: `-- =======================================================
+-- Database Schema for MSU Polytechnic IT Academic Portal
+-- Target RDBMS: Microsoft SQL Server / LocalDB / SQLite
+-- =======================================================
+
+CREATE DATABASE msu_regdb;
 GO
 
-IF NOT EXISTS (SELECT name FROM sys.databases WHERE name = N'MSU_AcademicDB')
-BEGIN
-    CREATE DATABASE [MSU_AcademicDB]
-END
+USE msu_regdb;
 GO
 
-USE [MSU_AcademicDB]
-GO
+-- 1. User Registration Table
+CREATE TABLE regdb (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    Name NVARCHAR(100) NOT NULL,
+    Address NVARCHAR(250) NOT NULL,
+    Birthdate DATE NOT NULL,
+    Gender NVARCHAR(10) NOT NULL,
+    Hobbies NVARCHAR(200),
+    Age INT NOT NULL CHECK (Age >= 16 AND Age <= 100),
+    Username NVARCHAR(50) NOT NULL UNIQUE,
+    Password NVARCHAR(100) NOT NULL,
+    Email NVARCHAR(100) NOT NULL,
+    UserType NVARCHAR(20) NOT NULL DEFAULT 'Student',
+    Mobile NVARCHAR(10) NOT NULL,
+    CreatedAt DATETIME DEFAULT GETDATE()
+);
 
--- 1. Experiment 15: Student/Faculty Registration Table
-IF OBJECT_ID(N'[dbo].[regdb]', N'U') IS NULL
-BEGIN
-    CREATE TABLE [dbo].[regdb] (
-        [id] INT IDENTITY(1,1) PRIMARY KEY,
-        [name] VARCHAR(50) NOT NULL,
-        [address] VARCHAR(255) NOT NULL,
-        [birthdate] VARCHAR(50) NOT NULL,
-        [gender] VARCHAR(50) NOT NULL,
-        [hobbies] VARCHAR(100) NOT NULL,
-        [age] VARCHAR(10) NOT NULL,
-        [username] VARCHAR(50) NOT NULL UNIQUE,
-        [password] VARCHAR(50) NOT NULL,
-        [confirmpassword] VARCHAR(50) NOT NULL,
-        [email] VARCHAR(100) NOT NULL,
-        [usertype] VARCHAR(50) NOT NULL,
-        [mobile] DECIMAL(18, 0) NOT NULL
-    );
-END
-GO
+-- 2. Feedback Table
+CREATE TABLE feedback (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    StudentName NVARCHAR(100) NOT NULL,
+    Subject NVARCHAR(100) NOT NULL,
+    Rating INT NOT NULL CHECK (Rating >= 1 AND Rating <= 5),
+    Comments NVARCHAR(MAX),
+    CreatedAt DATETIME DEFAULT GETDATE()
+);
 
--- 2. Experiment 14: Feedback Table for DataBinding
-IF OBJECT_ID(N'[dbo].[fd_table]', N'U') IS NULL
-BEGIN
-    CREATE TABLE [dbo].[fd_table] (
-        [id] INT IDENTITY(1,1) PRIMARY KEY,
-        [name] NVARCHAR(50) NOT NULL,
-        [feedback] NVARCHAR(MAX) NOT NULL
-    );
-END
-GO
+-- 3. Elective Allocation Table
+CREATE TABLE electives (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    StudentUsername NVARCHAR(50) NOT NULL,
+    ElectiveCode NVARCHAR(20) NOT NULL,
+    ElectiveName NVARCHAR(150) NOT NULL,
+    Semester INT NOT NULL,
+    EnrolledAt DATETIME DEFAULT GETDATE()
+);
 
--- Seed Admin Profile for Shlok Shah
-INSERT INTO [dbo].[regdb] 
-([name], [address], [birthdate], [gender], [hobbies], [age], [username], [password], [confirmpassword], [email], [usertype], [mobile])
-VALUES 
-('Shlok Shah', 'Vadodara, Gujarat', '2008-12-04', 'Male', 'Coding, Technology', '17', 'shlok', 'Admin@412', 'Admin@412', 'shlokshah412@gmail.com', 'Admin', 9512345504);
-GO`
+-- Seed Administrator Account
+INSERT INTO regdb (Name, Address, Birthdate, Gender, Hobbies, Age, Username, Password, Email, UserType, Mobile)
+VALUES ('Shlok Shah', 'Vadodara, Gujarat', '2008-12-04', 'Male', 'Coding, Technology', 17, 'shlok', 'Admin@412', 'shlokshah412@gmail.com', 'Admin', '9512345504');`
       }
     ]
   },
   {
-    id: 'coreapi',
-    name: 'ASP.NET Core Live REST API Server',
-    description: 'ASP.NET Core backend server providing live HTTP endpoints and persistent SQLite database interaction.',
+    id: 'server-config',
+    name: 'ASP.NET Core Server & Configuration',
+    description: 'Modern ASP.NET Core 9.0 REST API engine, MSBuild project files, Dockerfile, and Web.config.',
     files: [
       {
         id: 'program-cs',
         name: 'Program.cs (ASP.NET Core Server)',
         path: 'DotNetServer/Program.cs',
         language: 'csharp',
-        category: 'coreapi',
-        tag: 'ASP.NET Core 9.0 API Engine',
-        summary: 'Hosts high-performance endpoints for /api/users, /api/users/register, /api/auth/login, /api/feedback, and /api/electives with full parameterization.',
+        category: 'server-config',
+        tag: 'ASP.NET Core 9.0 API',
+        summary: 'Minimal API server in ASP.NET Core 9.0 exposing REST endpoints (/api/users, /api/auth/login, /api/feedback, /api/health) and SQLite persistence.',
         code: `using System.Data;
 using Microsoft.Data.Sqlite;
-using Microsoft.AspNetCore.Mvc;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Enable CORS for Vite dev server
 builder.Services.AddCors(options =>
 {
-    options.AddDefaultPolicy(policy =>
+    options.AddPolicy("AllowAll", policy =>
     {
-        policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
+        policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
     });
 });
 
 var app = builder.Build();
-app.UseCors();
+app.UseCors("AllowAll");
+app.UseDefaultFiles();
+app.UseStaticFiles();
 
-string dbPath = Path.Combine(app.Environment.ContentRootPath, "academic_portal.db");
-string connectionString = $"Data Source={dbPath}";
+const string connectionString = "Data Source=academic_portal.db";
 
-// Initialize Database Tables
-using (var con = new SqliteConnection(connectionString))
+// Initialize SQLite database tables
+using (var connection = new SqliteConnection(connectionString))
 {
-    con.Open();
-    using var cmd = con.CreateCommand();
+    connection.Open();
+    var cmd = connection.CreateCommand();
     cmd.CommandText = @"
         CREATE TABLE IF NOT EXISTS regdb (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name TEXT NOT NULL,
-            address TEXT NOT NULL,
-            birthdate TEXT NOT NULL,
-            gender TEXT NOT NULL,
-            hobbies TEXT NOT NULL,
-            age TEXT NOT NULL,
-            username TEXT NOT NULL UNIQUE,
-            password TEXT NOT NULL,
-            confirmpassword TEXT NOT NULL,
-            email TEXT NOT NULL,
-            usertype TEXT NOT NULL,
-            mobile TEXT NOT NULL,
-            created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+            Id INTEGER PRIMARY KEY AUTOINCREMENT,
+            Name TEXT NOT NULL,
+            Address TEXT NOT NULL,
+            Birthdate TEXT NOT NULL,
+            Gender TEXT NOT NULL,
+            Hobbies TEXT,
+            Age INTEGER NOT NULL,
+            Username TEXT NOT NULL UNIQUE,
+            Password TEXT NOT NULL,
+            Email TEXT NOT NULL,
+            UserType TEXT NOT NULL,
+            Mobile TEXT NOT NULL,
+            CreatedAt TEXT DEFAULT CURRENT_TIMESTAMP
         );
-
-        CREATE TABLE IF NOT EXISTS fd_table (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name TEXT NOT NULL,
-            feedback TEXT NOT NULL,
-            rating INTEGER DEFAULT 5,
-            submitted_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        CREATE TABLE IF NOT EXISTS feedback (
+            Id INTEGER PRIMARY KEY AUTOINCREMENT,
+            StudentName TEXT NOT NULL,
+            Subject TEXT NOT NULL,
+            Rating INTEGER NOT NULL,
+            Comments TEXT,
+            CreatedAt TEXT DEFAULT CURRENT_TIMESTAMP
         );
-
-        CREATE TABLE IF NOT EXISTS student_electives (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            username TEXT NOT NULL,
-            elective_name TEXT NOT NULL,
-            allocated_at DATETIME DEFAULT CURRENT_TIMESTAMP
-        );
-    ";
-    cmd.ExecuteNonQuery();
-
-    // Reset regdb with Shlok Shah admin profile
-    cmd.CommandText = "DELETE FROM regdb;";
-    cmd.ExecuteNonQuery();
-
-    cmd.CommandText = @"
-        INSERT INTO regdb (name, address, birthdate, gender, hobbies, age, username, password, confirmpassword, email, usertype, mobile)
-        VALUES 
-        ('Shlok Shah', 'Vadodara, Gujarat', '2008-12-04', 'Male', 'Coding, Technology', '17', 'shlok', 'Admin@412', 'Admin@412', 'shlokshah412@gmail.com', 'Admin', '9512345504');
     ";
     cmd.ExecuteNonQuery();
 }
 
-// 1. Health Status
+// Health Check Endpoint
 app.MapGet("/api/health", () => Results.Ok(new
 {
-    status = "Active",
-    framework = ".NET 10.0 (C# Server Engine)",
-    provider = "ADO.NET Core Data Provider",
-    database = "academic_portal.db",
+    status = "Healthy",
+    framework = ".NET 9.0",
+    engine = "ASP.NET Core Minimal API",
+    database = "SQLite / ADO.NET LocalDB",
     timestamp = DateTime.UtcNow
 }));
 
-// 2. Fetch All Registered Users
+// Users Endpoints
 app.MapGet("/api/users", () =>
 {
     var list = new List<Dictionary<string, object>>();
-    using var con = new SqliteConnection(connectionString);
-    con.Open();
-    using var cmd = con.CreateCommand();
-    cmd.CommandText = "SELECT * FROM regdb ORDER BY id DESC;";
+    using var conn = new SqliteConnection(connectionString);
+    conn.Open();
+    using var cmd = new SqliteCommand("SELECT * FROM regdb ORDER BY Id DESC", conn);
     using var reader = cmd.ExecuteReader();
     while (reader.Read())
     {
         var row = new Dictionary<string, object>();
         for (int i = 0; i < reader.FieldCount; i++)
-        {
-            row[reader.GetName(i)] = reader.GetValue(i);
-        }
+            row[reader.GetName(i).ToLower()] = reader.GetValue(i);
         list.Add(row);
     }
     return Results.Ok(list);
 });
 
-// 3. User Registration Endpoint
-app.MapPost("/api/users/register", ([FromBody] RegisterRequest req) =>
+app.MapPost("/api/users", async (HttpContext context) =>
 {
-    if (string.IsNullOrWhiteSpace(req.Username) || string.IsNullOrWhiteSpace(req.Password))
-    {
-        return Results.BadRequest(new { error = "Username and password are required." });
-    }
+    var form = await context.Request.ReadFromJsonAsync<Dictionary<string, object>>();
+    if (form == null) return Results.BadRequest("Invalid payload");
 
-    using var con = new SqliteConnection(connectionString);
-    con.Open();
-    using var cmd = con.CreateCommand();
-    cmd.CommandText = @"
-        INSERT INTO regdb (name, address, birthdate, gender, hobbies, age, username, password, confirmpassword, email, usertype, mobile)
-        VALUES (@name, @address, @birthdate, @gender, @hobbies, @age, @username, @password, @confirmpassword, @email, @usertype, @mobile);
-    ";
+    using var conn = new SqliteConnection(connectionString);
+    conn.Open();
+    using var cmd = new SqliteCommand(@"
+        INSERT INTO regdb (Name, Address, Birthdate, Gender, Hobbies, Age, Username, Password, Email, UserType, Mobile)
+        VALUES (@Name, @Address, @Birthdate, @Gender, @Hobbies, @Age, @Username, @Password, @Email, @UserType, @Mobile)
+    ", conn);
 
-    cmd.Parameters.AddWithValue("@name", req.Name ?? "");
-    cmd.Parameters.AddWithValue("@address", req.Address ?? "");
-    cmd.Parameters.AddWithValue("@birthdate", req.Birthdate ?? "");
-    cmd.Parameters.AddWithValue("@gender", req.Gender ?? "Male");
-    cmd.Parameters.AddWithValue("@hobbies", req.Hobbies ?? "");
-    cmd.Parameters.AddWithValue("@age", req.Age ?? "");
-    cmd.Parameters.AddWithValue("@username", req.Username.Trim());
-    cmd.Parameters.AddWithValue("@password", req.Password);
-    cmd.Parameters.AddWithValue("@confirmpassword", req.Confirmpassword ?? req.Password);
-    cmd.Parameters.AddWithValue("@email", req.Email ?? "");
-    cmd.Parameters.AddWithValue("@usertype", req.Usertype ?? "Student");
-    cmd.Parameters.AddWithValue("@mobile", req.Mobile ?? "");
+    cmd.Parameters.AddWithValue("@Name", form.GetValueOrDefault("name", ""));
+    cmd.Parameters.AddWithValue("@Address", form.GetValueOrDefault("address", ""));
+    cmd.Parameters.AddWithValue("@Birthdate", form.GetValueOrDefault("birthdate", ""));
+    cmd.Parameters.AddWithValue("@Gender", form.GetValueOrDefault("gender", "Male"));
+    cmd.Parameters.AddWithValue("@Hobbies", form.GetValueOrDefault("hobbies", ""));
+    cmd.Parameters.AddWithValue("@Age", Convert.ToInt32(form.GetValueOrDefault("age", 18)));
+    cmd.Parameters.AddWithValue("@Username", form.GetValueOrDefault("username", ""));
+    cmd.Parameters.AddWithValue("@Password", form.GetValueOrDefault("password", ""));
+    cmd.Parameters.AddWithValue("@Email", form.GetValueOrDefault("email", ""));
+    cmd.Parameters.AddWithValue("@UserType", form.GetValueOrDefault("usertype", "Student"));
+    cmd.Parameters.AddWithValue("@Mobile", form.GetValueOrDefault("mobile", ""));
 
-    try
-    {
-        cmd.ExecuteNonQuery();
-        return Results.Ok(new { success = true, username = req.Username, message = "User registered successfully." });
-    }
-    catch (Exception ex)
-    {
-        return Results.BadRequest(new { error = ex.Message });
-    }
-});
-
-// 4. Authentication Endpoint
-app.MapPost("/api/auth/login", ([FromBody] LoginRequest req) =>
-{
-    using var con = new SqliteConnection(connectionString);
-    con.Open();
-    using var cmd = con.CreateCommand();
-    cmd.CommandText = @"
-        SELECT * FROM regdb 
-        WHERE (LOWER(username) = LOWER(@user) OR LOWER(email) = LOWER(@user))
-        AND password = @pass 
-        AND usertype = @role;
-    ";
-
-    cmd.Parameters.AddWithValue("@user", req.Username.Trim());
-    cmd.Parameters.AddWithValue("@pass", req.Password);
-    cmd.Parameters.AddWithValue("@role", req.Usertype);
-
-    using var reader = cmd.ExecuteReader();
-    if (reader.Read())
-    {
-        var user = new Dictionary<string, object>();
-        for (int i = 0; i < reader.FieldCount; i++)
-        {
-            user[reader.GetName(i)] = reader.GetValue(i);
-        }
-        return Results.Ok(new { success = true, user });
-    }
-
-    return Results.BadRequest(new { success = false, error = "Invalid credentials or unauthorized role." });
-});
-
-// 5. Submit Feedback Endpoint
-app.MapPost("/api/feedback", ([FromBody] FeedbackRequest req) =>
-{
-    using var con = new SqliteConnection(connectionString);
-    con.Open();
-    using var cmd = con.CreateCommand();
-    cmd.CommandText = "INSERT INTO fd_table (name, feedback, rating) VALUES (@name, @feedback, @rating);";
-    cmd.Parameters.AddWithValue("@name", req.Name);
-    cmd.Parameters.AddWithValue("@feedback", req.Feedback);
-    cmd.Parameters.AddWithValue("@rating", req.Rating);
     cmd.ExecuteNonQuery();
-    return Results.Ok(new { success = true });
+    return Results.Ok(new { success = true, message = "Record inserted successfully via ADO.NET" });
 });
 
-app.Run("http://0.0.0.0:5000");
+app.MapFallbackToFile("index.html");
+app.Run("http://0.0.0.0:5000");`
+      },
+      {
+        id: 'web-config',
+        name: 'Web.config',
+        path: 'MSU_DotNet_Solution/Web.config',
+        language: 'xml',
+        category: 'server-config',
+        tag: 'XML Config',
+        summary: 'XML configuration defining connection strings, compilation parameters, UnobtrusiveValidationMode, and authentication.',
+        code: `<?xml version="1.0" encoding="utf-8"?>
+<!--
+  For more information on how to configure your ASP.NET application, please visit
+  https://go.microsoft.com/fwlink/?LinkId=169433
+  -->
+<configuration>
+  <connectionStrings>
+    <add name="regdbConnection"
+         connectionString="Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\\msu_regdb.mdf;Integrated Security=True"
+         providerName="System.Data.SqlClient" />
+  </connectionStrings>
+  
+  <system.web>
+    <compilation debug="true" targetFramework="4.8" />
+    <httpRuntime targetFramework="4.8" maxRequestLength="10240" />
+    <sessionState mode="InProc" timeout="30" />
+  </system.web>
 
-public record RegisterRequest(string Name, string Address, string Birthdate, string Gender, string Hobbies, string Age, string Username, string Password, string Confirmpassword, string Email, string Usertype, string Mobile);
-public record LoginRequest(string Username, string Password, string Usertype);
-public record FeedbackRequest(string Name, string Feedback, int Rating);`
+  <appSettings>
+    <add key="ValidationSettings:UnobtrusiveValidationMode" value="None" />
+  </appSettings>
+</configuration>`
+      },
+      {
+        id: 'csproj-web',
+        name: 'MSU_DotNet_Web.csproj',
+        path: 'MSU_DotNet_Solution/MSU_DotNet_Web.csproj',
+        language: 'xml',
+        category: 'server-config',
+        tag: 'MSBuild XML',
+        summary: 'MSBuild project configuration file for the Web Forms application, declaring dependencies such as System.Data.SqlClient.',
+        code: `<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>MSU_DotNet_Web</RootNamespace>
+    <AssemblyName>MSU_DotNet_Web</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Data.SqlClient" Version="4.8.6" />
+  </ItemGroup>
+
+</Project>`
+      },
+      {
+        id: 'csproj-server',
+        name: 'DotNetServer.csproj',
+        path: 'DotNetServer/DotNetServer.csproj',
+        language: 'xml',
+        category: 'server-config',
+        tag: 'MSBuild XML',
+        summary: 'MSBuild project configuration for the ASP.NET Core 9.0 server with Microsoft.Data.Sqlite and System.Data.SqlClient packages.',
+        code: `<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Data.Sqlite" Version="9.0.2" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.9.1" />
+  </ItemGroup>
+
+</Project>`
+      },
+      {
+        id: 'dockerfile',
+        name: 'Dockerfile',
+        path: 'Dockerfile',
+        language: 'docker',
+        category: 'server-config',
+        tag: 'Docker Container',
+        summary: 'Multi-stage Docker build combining Node 20 (Vite React frontend) and .NET 9.0 SDK into a lightweight production container for Render deployment.',
+        code: `# Multi-stage Dockerfile for All-in-One Full-Stack Deployment
+
+# Stage 1: Build Frontend (Vite + React)
+FROM node:20-alpine AS frontend-build
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci
+COPY . .
+RUN npm run build
+
+# Stage 2: Build & Publish .NET Backend
+FROM mcr.microsoft.com/dotnet/sdk:9.0 AS backend-build
+WORKDIR /src
+COPY DotNetServer/DotNetServer.csproj DotNetServer/
+RUN dotnet restore DotNetServer/DotNetServer.csproj
+COPY DotNetServer/ DotNetServer/
+WORKDIR /src/DotNetServer
+RUN dotnet publish -c Release -o /app/publish
+
+# Copy frontend build output to wwwroot so ASP.NET Core serves both UI and API
+COPY --from=frontend-build /app/dist /app/publish/wwwroot
+
+# Stage 3: Final Runtime
+FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS runtime
+WORKDIR /app
+COPY --from=backend-build /app/publish .
+ENV ASPNETCORE_URLS=http://0.0.0.0:5000
+ENV PORT=5000
+EXPOSE 5000
+ENTRYPOINT ["dotnet", "DotNetServer.dll"]`
       }
     ]
   }
