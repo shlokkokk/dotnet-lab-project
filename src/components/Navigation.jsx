@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Database, User, LogOut, Terminal, Sun, Moon, BookOpen, MessageSquare, UserPlus, LogIn, Activity } from 'lucide-react';
+import {
+  Database, User, LogOut, Terminal, Sun, Moon, BookOpen,
+  MessageSquare, UserPlus, LogIn, Activity
+} from 'lucide-react';
 import { checkServerHealth } from '../services/db';
 import ConfirmModal from './ConfirmModal';
 
@@ -8,156 +11,150 @@ export default function Navigation({ activeTab, setActiveTab, currentUser, onLog
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
   useEffect(() => {
-    const ping = async () => { const r = await checkServerHealth(); setServerOnline(!!r); };
+    const ping = async () => {
+      const r = await checkServerHealth();
+      setServerOnline(!!r);
+    };
     ping();
-    const iv = setInterval(ping, 2000);
+    const iv = setInterval(ping, 2500);
     return () => clearInterval(iv);
   }, []);
 
+  const navItems = [
+    { id: 'register', label: 'Registration', shortLabel: 'Register', icon: UserPlus },
+    { id: 'admin', label: 'Database', shortLabel: 'Database', icon: Database },
+    ...(currentUser?.usertype === 'Student' ? [{ id: 'student', label: 'Student Portal', shortLabel: 'Portal', icon: BookOpen }] : []),
+    { id: 'feedback', label: 'Feedback', shortLabel: 'Feedback', icon: MessageSquare },
+    { id: 'backend', label: 'Backend', shortLabel: 'Backend', icon: Terminal },
+  ];
+
   return (
     <>
+      {/* ── TOP HEADER (Desktop & Mobile) ── */}
       <header className="nav-header">
-
-        {/* Top bar */}
         <div className="nav-container">
 
           {/* Brand */}
           <div
-            style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', flexShrink: 0, userSelect: 'none' }}
+            className="brand-group"
             onClick={() => setActiveTab('register')}
           >
-            <div style={{
-              width: '36px', height: '36px', borderRadius: '10px',
-              background: theme === 'light' ? 'rgba(0,0,0,0.04)' : 'rgba(255,255,255,0.06)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              border: '1px solid var(--border-soft)',
-              boxShadow: '0 2px 8px rgba(0,0,0,0.12)',
-              flexShrink: 0, padding: '3px'
-            }}>
+            <div className="brand-logo-box">
               <img
                 src={theme === 'light' ? '/msu_logo_black.png' : '/msu_logo_white.png'}
                 alt="MSU Baroda"
-                style={{ width: '100%', height: '100%', objectFit: 'contain' }}
               />
             </div>
-            <div style={{ display: 'flex', flexDirection: 'column' }}>
-              <span style={{ fontSize: '0.9rem', fontWeight: 750, color: 'var(--text-primary)', lineHeight: 1.2, letterSpacing: '-0.01em' }}>
+            <div className="brand-text-col">
+              <span className="brand-title">
                 MSU Polytechnic
               </span>
-              <span style={{ fontSize: '0.625rem', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', letterSpacing: '0.04em' }}>
+              <span className="brand-subtext">
                 ACADEMIC PORTAL
               </span>
             </div>
           </div>
 
-          {/* Right side */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          {/* Right side controls */}
+          <div className="nav-controls-group">
 
-            {/* Server badge */}
-            <div style={{
-              display: 'inline-flex', alignItems: 'center', gap: '6px',
-              background: serverOnline ? 'rgba(16,185,129,0.08)' : 'transparent',
-              border: `1px solid ${serverOnline ? 'rgba(16,185,129,0.22)' : 'var(--border-subtle)'}`,
-              padding: '4px 10px', borderRadius: 'var(--r-full)',
-              fontSize: '0.7rem', fontFamily: 'var(--font-mono)',
-              color: serverOnline ? 'var(--accent-emerald)' : 'var(--text-muted)',
-              userSelect: 'none', transition: 'all 0.3s ease'
-            }}
+            {/* Server health badge */}
+            <div
+              className={`server-status-pill ${serverOnline ? 'online' : 'offline'}`}
               title={serverOnline ? 'ASP.NET Core on Port 5000' : 'LocalDB mode'}
             >
               <div className={`pulse-dot ${serverOnline ? 'online' : 'offline'}`} />
-              <span style={{ fontWeight: 600 }}>{serverOnline ? '.NET Live' : 'LocalDB'}</span>
+              <span className="server-status-text">{serverOnline ? '.NET Live' : 'LocalDB'}</span>
             </div>
 
-            {/* Theme toggle */}
+            {/* Theme toggle button */}
             <button
               onClick={toggleTheme}
-              className="btn btn-outline btn-icon"
+              className="theme-toggle-btn"
               title="Toggle theme"
               aria-label="Toggle color theme"
             >
               {theme === 'dark'
-                ? <Sun size={15} style={{ color: 'var(--accent-amber)' }} />
-                : <Moon size={15} style={{ color: 'var(--accent-indigo)' }} />}
+                ? <Sun size={14} style={{ color: 'var(--accent-amber)' }} />
+                : <Moon size={14} style={{ color: 'var(--accent-indigo)' }} />}
             </button>
 
-            {/* Auth */}
+            {/* User Auth status / button */}
             {currentUser ? (
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <span className="badge badge-cyan" style={{ fontSize: '0.68rem', padding: '4px 10px' }}>
-                  <User size={11} />
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <span className="badge badge-cyan" style={{ fontSize: '0.675rem', padding: '3px 8px', maxWidth: '90px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  <User size={10} />
                   {currentUser.username}
                 </span>
                 <button
                   onClick={() => setShowLogoutConfirm(true)}
                   className="btn btn-danger btn-icon-sm"
                   title="Sign out"
+                  style={{ width: '30px', height: '30px' }}
                 >
-                  <LogOut size={13} />
+                  <LogOut size={12} />
                 </button>
               </div>
             ) : (
               <button
                 onClick={() => setActiveTab('login')}
-                className="btn btn-primary btn-sm"
+                className="btn btn-primary nav-signin-btn"
               >
-                <LogIn size={13} />
-                Sign In
+                <LogIn size={12} />
+                <span>Sign In</span>
               </button>
             )}
           </div>
         </div>
 
-        {/* Tab strip */}
-        <div className="subnav-bar">
+        {/* ── DESKTOP SUBNAV STRIP (Hidden on mobile) ── */}
+        <div className="subnav-bar desktop-only-nav">
           <div className="subnav-container">
             <nav className="nav-tabs-wrapper" aria-label="Main navigation">
-              <button
-                className={`nav-tab-btn ${activeTab === 'register' ? 'active' : ''}`}
-                onClick={() => setActiveTab('register')}
-              >
-                <UserPlus size={13} />
-                Registration
-              </button>
-
-              <button
-                className={`nav-tab-btn ${activeTab === 'admin' ? 'active' : ''}`}
-                onClick={() => setActiveTab('admin')}
-              >
-                <Database size={13} />
-                Database
-              </button>
-
-              {currentUser?.usertype === 'Student' && (
-                <button
-                  className={`nav-tab-btn ${activeTab === 'student' ? 'active' : ''}`}
-                  onClick={() => setActiveTab('student')}
-                >
-                  <BookOpen size={13} />
-                  Student Portal
-                </button>
-              )}
-
-              <button
-                className={`nav-tab-btn ${activeTab === 'feedback' ? 'active' : ''}`}
-                onClick={() => setActiveTab('feedback')}
-              >
-                <MessageSquare size={13} />
-                Feedback
-              </button>
-
-              <button
-                className={`nav-tab-btn ${activeTab === 'backend' ? 'active' : ''}`}
-                onClick={() => setActiveTab('backend')}
-              >
-                <Terminal size={13} />
-                Backend
-              </button>
+              {navItems.map(item => {
+                const Icon = item.icon;
+                const isActive = activeTab === item.id;
+                return (
+                  <button
+                    key={item.id}
+                    className={`nav-tab-btn ${isActive ? 'active' : ''}`}
+                    onClick={() => setActiveTab(item.id)}
+                  >
+                    <Icon size={13} />
+                    {item.label}
+                  </button>
+                );
+              })}
             </nav>
           </div>
         </div>
       </header>
 
+      {/* ── MOBILE NATIVE BOTTOM NAVIGATION BAR (Visible ONLY on phones) ── */}
+      <nav className="mobile-bottom-nav" aria-label="Mobile navigation">
+        <div className="mobile-bottom-nav-inner">
+          {navItems.map(item => {
+            const Icon = item.icon;
+            const isActive = activeTab === item.id;
+            return (
+              <button
+                key={item.id}
+                className={`mobile-tab-btn ${isActive ? 'active' : ''}`}
+                onClick={() => setActiveTab(item.id)}
+                aria-label={item.label}
+              >
+                <div className="mobile-tab-icon-wrapper">
+                  <Icon size={18} />
+                  {isActive && <div className="mobile-tab-active-dot" />}
+                </div>
+                <span className="mobile-tab-label">{item.shortLabel}</span>
+              </button>
+            );
+          })}
+        </div>
+      </nav>
+
+      {/* Logout Confirmation Modal */}
       <ConfirmModal
         isOpen={showLogoutConfirm}
         title="Sign Out"
