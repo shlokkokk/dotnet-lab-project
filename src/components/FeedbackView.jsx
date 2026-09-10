@@ -10,7 +10,8 @@ import {
   User, 
   Clock, 
   MessageCircle,
-  Inbox
+  Inbox,
+  X
 } from 'lucide-react';
 import { fetchFeedback, submitFeedbackApi, saveFeedback } from '../services/db';
 import { simulateFeedbackInsert } from '../services/adoSimulator';
@@ -98,71 +99,74 @@ export default function FeedbackView({ currentUser }) {
   const currentDisplayRating = hoverRating || rating;
 
   return (
-    <div style={{ maxWidth: '980px', margin: '0 auto' }}>
+    <div style={{ maxWidth: '1040px', margin: '0 auto' }}>
       
-      {/* Page Title */}
+      {/* Page Header */}
       <div style={{ marginBottom: '20px' }}>
-        <h1 style={{ fontSize: '1.35rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '4px' }}>
-          Student &amp; Faculty Feedback
+        <div className="badge badge-cyan" style={{ marginBottom: '6px' }}>
+          Academic Experience Feedback
+        </div>
+        <h1 style={{ fontSize: '1.45rem', fontWeight: 800, color: 'var(--text-primary)', letterSpacing: '-0.01em' }}>
+          Student &amp; Faculty Reviews (dbo.fd_table)
         </h1>
-        <p style={{ fontSize: '0.8125rem', color: 'var(--text-secondary)' }}>
-          Submit and explore academic reviews stored in database table <code style={{ fontFamily: 'var(--font-mono)', color: 'var(--accent-cyan)' }}>dbo.fd_table</code>.
+        <p style={{ fontSize: '0.8125rem', color: 'var(--text-secondary)', marginTop: '2px' }}>
+          Submit and explore academic ratings stored with ADO.NET in database table <code style={{ fontFamily: 'var(--font-mono)', color: 'var(--accent-cyan)' }}>dbo.fd_table</code>.
         </p>
       </div>
 
-      {/* Side-by-side Balanced Grid */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))', gap: '20px', alignItems: 'start' }}>
+      {/* Dual Column Layout (Responsive grid) */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '20px', alignItems: 'start' }}>
         
-        {/* Left Column: Form */}
+        {/* Left Column: Form Panel */}
         <div className="card-panel" style={{ padding: '24px' }}>
           
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '18px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '18px', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '14px' }}>
             <div style={{ 
-              width: '36px', 
-              height: '36px', 
+              width: '40px', 
+              height: '40px', 
               borderRadius: 'var(--radius-sm)', 
-              background: 'rgba(2, 132, 199, 0.15)', 
+              background: 'linear-gradient(135deg, rgba(2, 132, 199, 0.2) 0%, rgba(99, 102, 241, 0.2) 100%)', 
               color: 'var(--accent-cyan)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               flexShrink: 0
             }}>
-              <MessageSquare size={17} />
+              <MessageSquare size={18} />
             </div>
             <div>
-              <h2 style={{ fontSize: '1rem', fontWeight: 600, color: 'var(--text-primary)' }}>
-                Write Feedback
+              <h2 style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--text-primary)' }}>
+                Write Your Feedback
               </h2>
-              <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-                Share your academic experience
+              <div style={{ fontSize: '0.725rem', color: 'var(--text-muted)' }}>
+                Submit course ratings and lab experience
               </div>
             </div>
           </div>
 
           {successStatus && (
             <div style={{ 
-              background: 'rgba(16, 185, 129, 0.1)', 
-              border: '1px solid rgba(16, 185, 129, 0.25)', 
-              padding: '10px 12px', 
+              background: 'rgba(16, 185, 129, 0.12)', 
+              border: '1px solid rgba(16, 185, 129, 0.3)', 
+              padding: '12px 14px', 
               borderRadius: 'var(--radius-sm)', 
-              color: '#34d399', 
-              fontSize: '0.8rem', 
+              color: 'var(--accent-emerald)', 
+              fontSize: '0.8125rem', 
               marginBottom: '16px', 
               display: 'flex', 
               alignItems: 'center', 
-              gap: '8px' 
+              gap: '10px' 
             }}>
-              <CheckCircle2 size={15} style={{ flexShrink: 0 }} />
-              <span>Feedback submitted and saved to dbo.fd_table.</span>
+              <CheckCircle2 size={16} style={{ flexShrink: 0 }} />
+              <span>Feedback successfully written to dbo.fd_table.</span>
             </div>
           )}
 
-          <form onSubmit={handleFormSubmitClick}>
+          <form onSubmit={handleFormSubmitClick} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
             
-            <div className="form-group" style={{ marginBottom: '16px' }}>
+            <div className="form-group">
               <label className="form-label">
-                Email Address <span className="required">*</span>
+                Email / Name <span className="required">*</span>
               </label>
               <input
                 type="email"
@@ -174,17 +178,17 @@ export default function FeedbackView({ currentUser }) {
               />
             </div>
 
-            <div className="form-group" style={{ marginBottom: '16px' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
-                <span className="form-label" style={{ marginBottom: 0 }}>
-                  Rating <span className="required">*</span>
+            <div className="form-group">
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
+                <span className="form-label">
+                  Experience Rating <span className="required">*</span>
                 </span>
-                <span style={{ fontSize: '0.75rem', color: 'var(--accent-amber)', fontWeight: 600, fontFamily: 'var(--font-mono)' }}>
+                <span style={{ fontSize: '0.75rem', color: 'var(--accent-amber)', fontWeight: 700, fontFamily: 'var(--font-mono)' }}>
                   {ratingLabels[currentDisplayRating]}
                 </span>
               </div>
               
-              <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
+              <div style={{ display: 'flex', gap: '8px', alignItems: 'center', background: 'var(--bg-primary)', padding: '10px 14px', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-subtle)' }}>
                 {[1, 2, 3, 4, 5].map((star) => {
                   const isFilled = currentDisplayRating >= star;
                   return (
@@ -199,35 +203,36 @@ export default function FeedbackView({ currentUser }) {
                         border: 'none',
                         cursor: 'pointer',
                         padding: '4px',
-                        color: isFilled ? 'var(--accent-amber)' : 'var(--text-muted)',
-                        transition: 'transform 0.1s ease, color 0.15s ease',
-                        transform: hoverRating === star ? 'scale(1.2)' : 'none'
+                        color: isFilled ? '#fbbf24' : 'var(--text-muted)',
+                        transition: 'transform 0.15s cubic-bezier(0.16, 1, 0.3, 1)',
+                        transform: hoverRating === star ? 'scale(1.25)' : 'none',
+                        display: 'flex'
                       }}
                       title={ratingLabels[star]}
                     >
-                      <Star size={22} fill={isFilled ? 'currentColor' : 'none'} />
+                      <Star size={24} fill={isFilled ? 'currentColor' : 'none'} strokeWidth={1.5} />
                     </button>
                   );
                 })}
               </div>
             </div>
 
-            <div className="form-group" style={{ marginBottom: '20px' }}>
+            <div className="form-group">
               <label className="form-label">
-                Feedback Comments <span className="required">*</span>
+                Feedback Details <span className="required">*</span>
               </label>
               <textarea
                 rows={3}
                 className="form-textarea"
-                placeholder="Write your detailed review or comments..."
+                placeholder="Share your thoughts about laboratory sessions, faculty guidance, and course material..."
                 value={feedbackText}
                 onChange={(e) => setFeedbackText(e.target.value)}
                 required
               />
             </div>
 
-            <button type="submit" className="btn btn-primary" style={{ width: '100%', padding: '10px' }}>
-              <Send size={14} />
+            <button type="submit" className="btn btn-primary btn-lg" style={{ width: '100%', marginTop: '6px' }}>
+              <Send size={15} />
               Submit Feedback
             </button>
           </form>
@@ -235,24 +240,24 @@ export default function FeedbackView({ currentUser }) {
         </div>
 
         {/* Right Column: Feedback Stream */}
-        <div className="card-panel" style={{ padding: '24px', display: 'flex', flexDirection: 'column', minHeight: '420px' }}>
+        <div className="card-panel" style={{ padding: '24px', display: 'flex', flexDirection: 'column', minHeight: '440px' }}>
           
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', flexWrap: 'wrap', gap: '10px' }}>
             <div>
-              <h2 style={{ fontSize: '1rem', fontWeight: 600, color: 'var(--text-primary)' }}>
-                Recent Feedback
+              <h2 style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--text-primary)' }}>
+                Community Reviews
               </h2>
-              <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+              <div style={{ fontSize: '0.725rem', color: 'var(--text-muted)' }}>
                 {filtered.length} {filtered.length === 1 ? 'Record' : 'Records'} in dbo.fd_table
               </div>
             </div>
 
-            <div style={{ position: 'relative', minWidth: '180px' }}>
-              <Search size={13} style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
+            <div style={{ position: 'relative', minWidth: '180px', flex: '1 1 180px', maxWidth: '240px' }}>
+              <Search size={14} style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
               <input
                 type="text"
                 className="form-input"
-                style={{ paddingLeft: '30px', fontSize: '0.785rem', width: '100%' }}
+                style={{ paddingLeft: '32px', fontSize: '0.785rem', width: '100%' }}
                 placeholder="Filter reviews..."
                 value={searchTerm}
                 onChange={(e) => {
@@ -260,6 +265,14 @@ export default function FeedbackView({ currentUser }) {
                   setCurrentPage(1);
                 }}
               />
+              {searchTerm && (
+                <button
+                  onClick={() => setSearchTerm('')}
+                  style={{ position: 'absolute', right: '8px', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', display: 'flex' }}
+                >
+                  <X size={13} />
+                </button>
+              )}
             </div>
           </div>
 
@@ -272,51 +285,52 @@ export default function FeedbackView({ currentUser }) {
                 flexDirection: 'column', 
                 alignItems: 'center', 
                 justifyContent: 'center', 
-                padding: '40px 20px', 
+                padding: '50px 20px', 
                 textAlign: 'center',
                 color: 'var(--text-muted)',
-                background: 'var(--bg-secondary)',
+                background: 'var(--bg-primary)',
                 borderRadius: 'var(--radius-sm)',
                 border: '1px dashed var(--border-subtle)'
               }}>
-                <Inbox size={32} style={{ marginBottom: '10px', opacity: 0.5 }} />
-                <div style={{ fontSize: '0.875rem', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '2px' }}>
+                <Inbox size={36} style={{ marginBottom: '10px', opacity: 0.4, color: 'var(--accent-cyan)' }} />
+                <div style={{ fontSize: '0.9rem', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '2px' }}>
                   No feedback records found
                 </div>
-                <div style={{ fontSize: '0.75rem' }}>
-                  Submit the form on the left to add a new review.
+                <div style={{ fontSize: '0.785rem' }}>
+                  Submit a review using the form on the left.
                 </div>
               </div>
             ) : (
               paginated.map((item) => (
                 <div 
                   key={item.id} 
+                  className="card-panel-hover"
                   style={{ 
-                    background: 'var(--bg-secondary)', 
-                    padding: '14px', 
+                    background: 'var(--bg-primary)', 
+                    padding: '14px 16px', 
                     borderRadius: 'var(--radius-sm)', 
                     border: '1px solid var(--border-subtle)',
                     display: 'flex',
                     flexDirection: 'column',
-                    gap: '6px'
+                    gap: '8px'
                   }}
                 >
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '6px' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <span style={{ fontSize: '0.8125rem', fontWeight: 600, color: 'var(--accent-cyan)', fontFamily: 'var(--font-mono)' }}>
+                      <span style={{ fontSize: '0.825rem', fontWeight: 700, color: 'var(--accent-cyan)', fontFamily: 'var(--font-mono)' }}>
                         {item.name}
                       </span>
                     </div>
 
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                       {/* Visual Stars */}
-                      <div style={{ display: 'flex', gap: '2px', color: 'var(--accent-amber)' }}>
+                      <div style={{ display: 'flex', gap: '2px', color: '#fbbf24' }}>
                         {[1, 2, 3, 4, 5].map((s) => (
                           <Star 
                             key={s} 
-                            size={12} 
+                            size={13} 
                             fill={s <= item.rating ? 'currentColor' : 'none'} 
-                            style={{ opacity: s <= item.rating ? 1 : 0.3 }}
+                            style={{ opacity: s <= item.rating ? 1 : 0.25 }}
                           />
                         ))}
                       </div>
@@ -327,7 +341,7 @@ export default function FeedbackView({ currentUser }) {
                     </div>
                   </div>
 
-                  <p style={{ margin: 0, fontSize: '0.8rem', color: 'var(--text-secondary)', lineHeight: 1.45 }}>
+                  <p style={{ margin: 0, fontSize: '0.8125rem', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
                     {item.feedback}
                   </p>
                 </div>
@@ -346,7 +360,7 @@ export default function FeedbackView({ currentUser }) {
                   disabled={currentPage === 1}
                   onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
                   className="btn btn-sm btn-outline"
-                  style={{ padding: '3px 8px', fontSize: '0.75rem' }}
+                  style={{ padding: '4px 10px', fontSize: '0.75rem' }}
                 >
                   <ChevronLeft size={13} /> Prev
                 </button>
@@ -354,7 +368,7 @@ export default function FeedbackView({ currentUser }) {
                   disabled={currentPage === totalPages}
                   onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
                   className="btn btn-sm btn-outline"
-                  style={{ padding: '3px 8px', fontSize: '0.75rem' }}
+                  style={{ padding: '4px 10px', fontSize: '0.75rem' }}
                 >
                   Next <ChevronRight size={13} />
                 </button>

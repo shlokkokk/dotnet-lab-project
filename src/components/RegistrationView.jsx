@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { UserPlus, ShieldAlert, CheckCircle2, RotateCcw, Sparkles, AlertCircle, Eye, EyeOff, Database, Plus, X } from 'lucide-react';
+import { UserPlus, ShieldAlert, CheckCircle2, RotateCcw, Sparkles, AlertCircle, Eye, EyeOff, Database, Plus, X, User, Lock, Mail, Phone, MapPin, Calendar, Heart, Shield } from 'lucide-react';
 import { fetchUsers, registerUserApi, saveUsers } from '../services/db';
 import { simulateRegistrationInsert } from '../services/adoSimulator';
 import ConfirmModal from './ConfirmModal';
@@ -198,22 +198,18 @@ export default function RegistrationView({ onRegistrationSuccess, onNavigateToDb
     if (isLongEnough) checks++;
     if (isVeryLong) checks++;
 
-    if (pwd.length < 6) {
-      return { score: 1, percent: 25, label: 'Too Short (< 6 chars)', color: 'var(--accent-rose)' };
-    }
-
     if (checks <= 2) {
-      return { score: 1, percent: 35, label: 'Weak', color: 'var(--accent-rose)' };
+      return { score: 1, percent: 30, label: 'Weak', color: '#f43f5e' };
+    } else if (checks <= 4) {
+      return { score: 2, percent: 65, label: 'Medium', color: '#f59e0b' };
+    } else {
+      return { score: 3, percent: 100, label: 'Strong', color: '#10b981' };
     }
-    if (checks <= 4) {
-      return { score: 2, percent: 70, label: 'Moderate', color: 'var(--accent-amber)' };
-    }
-    return { score: 3, percent: 100, label: 'Strong', color: 'var(--accent-emerald)' };
   };
 
   const pwdStrength = getPasswordStrength(formData.password);
 
-  const handleFormSubmitClick = (e) => {
+  const handleSubmitClick = (e) => {
     e.preventDefault();
     setIsSubmitted(true);
     setTouched({
@@ -228,15 +224,14 @@ export default function RegistrationView({ onRegistrationSuccess, onNavigateToDb
       mobile: true
     });
 
-    if (!isValid) return;
-
-    // Open confirmation modal
-    setShowSubmitConfirm(true);
+    if (isValid) {
+      setShowSubmitConfirm(true);
+    }
   };
 
   const executeConfirmedSubmit = async () => {
     setShowSubmitConfirm(false);
-
+    
     const newUser = {
       id: Date.now(),
       name: formData.name.trim(),
@@ -250,25 +245,48 @@ export default function RegistrationView({ onRegistrationSuccess, onNavigateToDb
       confirmpassword: formData.confirmpassword,
       email: formData.email.trim(),
       usertype: formData.usertype,
-      mobile: formData.mobile.trim(),
-      createdAt: new Date().toISOString()
+      mobile: parseInt(formData.mobile.replace(/\D/g, ''), 10) || 0
     };
 
-    saveUsers([newUser, ...existingUsers]);
-    setExistingUsers((prev) => [newUser, ...prev]);
+    const updated = [...existingUsers, newUser];
+    setExistingUsers(updated);
+    saveUsers(updated);
 
+    // Live API call
     await registerUserApi(newUser);
+
+    // Simulate ADO.NET query execution
     simulateRegistrationInsert(newUser);
 
-    setSuccessMessage({
-      title: 'Registration Record Successfully Created',
-      username: newUser.username,
-      usertype: newUser.usertype
-    });
+    setSuccessMessage(`Registration successful for "${newUser.name}". Stored into dbo.regdb table.`);
+
+    setTimeout(() => {
+      onRegistrationSuccess(newUser.username, newUser.usertype);
+    }, 1800);
   };
 
-  const executeConfirmedReset = () => {
-    setShowResetConfirm(false);
+  const handleFillSample = () => {
+    const sampleIndex = Math.floor(Math.random() * 1000);
+    setFormData({
+      name: `Rahul Sharma`,
+      address: `402, Sayaji Residency, Near Polytechnic, Vadodara, Gujarat 390002`,
+      birthdate: '2004-05-18',
+      gender: 'Male',
+      hobbies: ['Coding', 'Reading', 'Robotics'],
+      age: '22',
+      username: `rahul_${sampleIndex}`,
+      password: 'Password@123',
+      confirmpassword: 'Password@123',
+      email: `rahul.sharma${sampleIndex}@msu.edu`,
+      usertype: 'Student',
+      mobile: '9876543210'
+    });
+    setTouched({});
+    setIsSubmitted(false);
+    setShowSampleConfirm(false);
+  };
+
+  const handleResetForm = () => {
     setFormData({
       name: '',
       address: '',
@@ -285,113 +303,84 @@ export default function RegistrationView({ onRegistrationSuccess, onNavigateToDb
     });
     setTouched({});
     setIsSubmitted(false);
-    setSuccessMessage(null);
-  };
-
-  const handleSampleDataClick = () => {
-    setShowSampleConfirm(true);
-  };
-
-  const executeConfirmedSampleData = () => {
-    setShowSampleConfirm(false);
-    const rnd = Math.floor(100 + Math.random() * 900);
-    const randomMobile = `98${Math.floor(10000000 + Math.random() * 90000000)}`;
-    setFormData({
-      name: `Student User ${rnd}`,
-      address: `Campus Residence, University Road, Vadodara`,
-      birthdate: `2004-05-15`,
-      gender: `Male`,
-      hobbies: ['Coding', 'Reading', 'Robotics'],
-      age: `20`,
-      username: `student_${rnd}`,
-      password: `Pass@${rnd}#2024`,
-      confirmpassword: `Pass@${rnd}#2024`,
-      email: `student${rnd}@example.com`,
-      usertype: `Student`,
-      mobile: randomMobile
-    });
-    setTouched({});
+    setShowResetConfirm(false);
   };
 
   return (
     <div style={{ maxWidth: '820px', margin: '0 auto' }}>
       
-      {/* Top Title Bar */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '18px', flexWrap: 'wrap', gap: '10px' }}>
-        <div>
-          <div className="badge badge-blue" style={{ marginBottom: '4px' }}>
-            Academic Registration System
-          </div>
-          <h1 style={{ fontSize: '1.35rem', fontWeight: 700, color: 'var(--text-primary)' }}>
-            Student &amp; Faculty Registration Portal
-          </h1>
-          <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
-            Stores structured records in database table <code style={{ fontFamily: 'var(--font-mono)', color: 'var(--accent-cyan)' }}>dbo.regdb</code>
-          </p>
+      {/* Page Header */}
+      <div style={{ marginBottom: '20px', textAlign: 'left' }}>
+        <div className="badge badge-blue" style={{ marginBottom: '6px' }}>
+          MSU Baroda &bull; Polytechnic IT Portal
         </div>
-
-        <button onClick={handleSampleDataClick} className="btn btn-secondary btn-sm" title="Populate valid demo attributes">
-          <Sparkles size={13} style={{ color: 'var(--accent-amber)' }} />
-          Quick-Fill Sample Data
-        </button>
+        <h1 style={{ fontSize: '1.45rem', fontWeight: 800, color: 'var(--text-primary)', letterSpacing: '-0.01em' }}>
+          Academic Registration (RegistrationPage.aspx)
+        </h1>
+        <p style={{ fontSize: '0.8125rem', color: 'var(--text-secondary)', marginTop: '2px' }}>
+          Submit user details with ADO.NET parameterized queries targeting database table <code style={{ fontFamily: 'var(--font-mono)', color: 'var(--accent-cyan)' }}>dbo.regdb</code>.
+        </p>
       </div>
 
-      {/* Success Notification */}
+      {/* Success Alert */}
       {successMessage && (
-        <div className="card-panel" style={{ padding: '20px', marginBottom: '20px', borderLeft: '4px solid var(--accent-emerald)', background: 'rgba(16, 185, 129, 0.08)' }}>
-          <div style={{ display: 'flex', gap: '12px', alignItems: 'flex-start' }}>
-            <CheckCircle2 size={22} style={{ color: 'var(--accent-emerald)', flexShrink: 0, marginTop: '2px' }} />
-            <div style={{ flex: 1 }}>
-              <h3 style={{ fontSize: '0.95rem', fontWeight: 600, color: 'var(--text-primary)' }}>
-                {successMessage.title}
-              </h3>
-              <p style={{ fontSize: '0.8125rem', color: 'var(--text-secondary)', marginTop: '2px', marginBottom: '12px' }}>
-                Account for <strong>{successMessage.username}</strong> ({successMessage.usertype}) is verified and persisted in <code style={{ fontFamily: 'var(--font-mono)' }}>dbo.regdb</code>.
-              </p>
-              <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-                <button className="btn btn-sm btn-primary" onClick={() => onRegistrationSuccess(successMessage.username, successMessage.usertype)}>
-                  Go to Login
-                </button>
-                <button className="btn btn-sm btn-secondary" onClick={onNavigateToDb}>
-                  <Database size={12} />
-                  View in dbo.regdb Table
-                </button>
-                <button className="btn btn-sm btn-outline" onClick={() => setSuccessMessage(null)}>
-                  Create Another Record
-                </button>
-              </div>
-            </div>
+        <div style={{
+          background: 'rgba(16, 185, 129, 0.12)',
+          border: '1px solid rgba(16, 185, 129, 0.3)',
+          borderRadius: 'var(--radius-md)',
+          padding: '14px 18px',
+          color: 'var(--accent-emerald)',
+          marginBottom: '20px',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '12px',
+          boxShadow: '0 4px 12px rgba(16, 185, 129, 0.1)'
+        }}>
+          <CheckCircle2 size={20} style={{ flexShrink: 0 }} />
+          <div>
+            <div style={{ fontWeight: 700, fontSize: '0.875rem' }}>Registration Successful!</div>
+            <div style={{ fontSize: '0.785rem', color: 'var(--text-secondary)' }}>{successMessage}</div>
           </div>
         </div>
       )}
 
-      {/* Form Container */}
-      <div className="card-panel" style={{ padding: '24px' }}>
-        <form onSubmit={handleFormSubmitClick} noValidate>
-          
-          {/* Section 1 */}
-          <div style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-muted)', marginBottom: '12px', fontFamily: 'var(--font-mono)' }}>
-            1. PERSONAL PROFILE
+      {/* Main Registration Form */}
+      <form onSubmit={handleSubmitClick} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+        
+        {/* SECTION 1: ACCOUNT CREDENTIALS */}
+        <div className="card-panel" style={{ padding: '24px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '18px', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '12px' }}>
+            <div style={{ width: '34px', height: '34px', borderRadius: 'var(--radius-sm)', background: 'rgba(2, 132, 199, 0.15)', color: 'var(--accent-cyan)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+              <Lock size={16} />
+            </div>
+            <div>
+              <h2 style={{ fontSize: '0.975rem', fontWeight: 700, color: 'var(--text-primary)' }}>
+                Account &amp; Security Credentials
+              </h2>
+              <div style={{ fontSize: '0.725rem', color: 'var(--text-muted)' }}>
+                Username, email, mobile, and authentication password
+              </div>
+            </div>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '14px', marginBottom: '14px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '16px' }}>
             
-            {/* Name */}
+            {/* Username */}
             <div className="form-group">
-              <label className="form-label" htmlFor="reg-name">
-                Full Name <span className="required">*</span>
+              <label className="form-label" htmlFor="reg-username">
+                Username <span className="required">*</span>
               </label>
               <input
-                id="reg-name"
+                id="reg-username"
                 type="text"
-                className={`form-input ${(touched.name || isSubmitted) && errors.name ? 'error' : touched.name && !errors.name ? 'valid' : ''}`}
-                placeholder="Enter full name"
-                value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                onBlur={() => setTouched({ ...touched, name: true })}
+                className={`form-input ${(touched.username || isSubmitted) && errors.username ? 'error' : touched.username && !errors.username ? 'valid' : ''}`}
+                placeholder="e.g. shlok_poly"
+                value={formData.username}
+                onChange={(e) => setFormData({ ...formData, username: e.target.value })}
+                onBlur={() => setTouched({ ...touched, username: true })}
                 onKeyDown={(e) => handleKeyDownNext(e, 'reg-email')}
               />
-              {(touched.name || isSubmitted) && errors.name && <span className="form-error">{errors.name}</span>}
+              {(touched.username || isSubmitted) && errors.username && <span className="form-error">{errors.username}</span>}
             </div>
 
             {/* Email */}
@@ -422,37 +411,113 @@ export default function RegistrationView({ onRegistrationSuccess, onNavigateToDb
                 type="tel"
                 maxLength={10}
                 className={`form-input ${(touched.mobile || isSubmitted) && errors.mobile ? 'error' : touched.mobile && !errors.mobile ? 'valid' : ''}`}
-                placeholder="Enter 10-digit mobile number"
+                placeholder="10-digit mobile number"
                 value={formData.mobile}
                 onChange={(e) => setFormData({ ...formData, mobile: e.target.value.replace(/\D/g, '') })}
                 onBlur={() => setTouched({ ...touched, mobile: true })}
-                onKeyDown={(e) => handleKeyDownNext(e, 'reg-address')}
+                onKeyDown={(e) => handleKeyDownNext(e, 'reg-password')}
               />
               {(touched.mobile || isSubmitted) && errors.mobile && <span className="form-error">{errors.mobile}</span>}
             </div>
 
+            {/* Password */}
+            <div className="form-group">
+              <label className="form-label" htmlFor="reg-password">
+                Password <span className="required">*</span>
+              </label>
+              <div style={{ position: 'relative' }}>
+                <input
+                  id="reg-password"
+                  type={showPassword ? 'text' : 'password'}
+                  className={`form-input ${(touched.password || isSubmitted) && errors.password ? 'error' : ''}`}
+                  placeholder="Min 6 characters"
+                  style={{ paddingRight: '38px' }}
+                  value={formData.password}
+                  onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                  onBlur={() => setTouched({ ...touched, password: true })}
+                  onKeyDown={(e) => handleKeyDownNext(e, 'reg-confirmpassword')}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', display: 'flex' }}
+                >
+                  {showPassword ? <EyeOff size={15} /> : <Eye size={15} />}
+                </button>
+              </div>
+              
+              {/* Strength Meter */}
+              {formData.password && (
+                <div style={{ marginTop: '6px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.675rem', marginBottom: '3px' }}>
+                    <span style={{ color: 'var(--text-muted)' }}>Strength:</span>
+                    <span style={{ color: pwdStrength.color, fontWeight: 700 }}>{pwdStrength.label}</span>
+                  </div>
+                  <div style={{ height: '4px', background: 'var(--bg-tertiary)', borderRadius: 'var(--radius-full)', overflow: 'hidden' }}>
+                    <div style={{ width: `${pwdStrength.percent}%`, height: '100%', background: pwdStrength.color, transition: 'all 0.3s ease' }} />
+                  </div>
+                </div>
+              )}
+              {(touched.password || isSubmitted) && errors.password && <span className="form-error">{errors.password}</span>}
+            </div>
+
+            {/* Confirm Password */}
+            <div className="form-group">
+              <label className="form-label" htmlFor="reg-confirmpassword">
+                Confirm Password <span className="required">*</span>
+              </label>
+              <input
+                id="reg-confirmpassword"
+                type={showPassword ? 'text' : 'password'}
+                className={`form-input ${(touched.confirmpassword || isSubmitted) && errors.confirmpassword ? 'error' : touched.confirmpassword && !errors.confirmpassword ? 'valid' : ''}`}
+                placeholder="Re-enter password"
+                value={formData.confirmpassword}
+                onChange={(e) => setFormData({ ...formData, confirmpassword: e.target.value })}
+                onBlur={() => setTouched({ ...touched, confirmpassword: true })}
+                onKeyDown={(e) => handleKeyDownNext(e, 'reg-name')}
+              />
+              {(touched.confirmpassword || isSubmitted) && errors.confirmpassword && <span className="form-error">{errors.confirmpassword}</span>}
+            </div>
+
+          </div>
+        </div>
+
+        {/* SECTION 2: PERSONAL DEMOGRAPHICS */}
+        <div className="card-panel" style={{ padding: '24px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '18px', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '12px' }}>
+            <div style={{ width: '34px', height: '34px', borderRadius: 'var(--radius-sm)', background: 'rgba(16, 185, 129, 0.15)', color: 'var(--accent-emerald)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+              <User size={16} />
+            </div>
+            <div>
+              <h2 style={{ fontSize: '0.975rem', fontWeight: 700, color: 'var(--text-primary)' }}>
+                Personal &amp; Demographic Profile
+              </h2>
+              <div style={{ fontSize: '0.725rem', color: 'var(--text-muted)' }}>
+                Full name, residential address, birthdate, and institutional role
+              </div>
+            </div>
           </div>
 
-          {/* Address */}
-          <div className="form-group" style={{ marginBottom: '14px' }}>
-            <label className="form-label" htmlFor="reg-address">
-              Residential Address <span className="required">*</span>
-            </label>
-            <textarea
-              id="reg-address"
-              rows={2}
-              className={`form-textarea ${(touched.address || isSubmitted) && errors.address ? 'error' : ''}`}
-              placeholder="Enter residential address"
-              value={formData.address}
-              onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-              onBlur={() => setTouched({ ...touched, address: true })}
-            />
-            {(touched.address || isSubmitted) && errors.address && <span className="form-error">{errors.address}</span>}
-          </div>
-
-          {/* Demographic Section */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '14px', marginBottom: '14px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '16px', marginBottom: '16px' }}>
             
+            {/* Full Name */}
+            <div className="form-group">
+              <label className="form-label" htmlFor="reg-name">
+                Full Name <span className="required">*</span>
+              </label>
+              <input
+                id="reg-name"
+                type="text"
+                className={`form-input ${(touched.name || isSubmitted) && errors.name ? 'error' : touched.name && !errors.name ? 'valid' : ''}`}
+                placeholder="e.g. Shlok Shah"
+                value={formData.name}
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                onBlur={() => setTouched({ ...touched, name: true })}
+                onKeyDown={(e) => handleKeyDownNext(e, 'reg-address')}
+              />
+              {(touched.name || isSubmitted) && errors.name && <span className="form-error">{errors.name}</span>}
+            </div>
+
             {/* Birthdate */}
             <div className="form-group">
               <label className="form-label" htmlFor="reg-birthdate">
@@ -481,7 +546,7 @@ export default function RegistrationView({ onRegistrationSuccess, onNavigateToDb
                 min="16"
                 max="100"
                 className={`form-input ${(touched.age || isSubmitted) && errors.age ? 'error' : ''}`}
-                placeholder="Auto-calculated or enter age"
+                placeholder="Auto-calculated"
                 value={formData.age}
                 onChange={(e) => setFormData({ ...formData, age: e.target.value })}
                 onBlur={() => setTouched({ ...touched, age: true })}
@@ -493,14 +558,13 @@ export default function RegistrationView({ onRegistrationSuccess, onNavigateToDb
             {/* Role */}
             <div className="form-group">
               <label className="form-label" htmlFor="reg-role">
-                User Role <span className="required">*</span>
+                Portal Role <span className="required">*</span>
               </label>
               <select
                 id="reg-role"
                 className="form-select"
                 value={formData.usertype}
                 onChange={(e) => setFormData({ ...formData, usertype: e.target.value })}
-                onKeyDown={(e) => handleKeyDownNext(e, 'reg-username')}
               >
                 <option value="Student">Student</option>
                 <option value="Faculty">Faculty</option>
@@ -511,13 +575,13 @@ export default function RegistrationView({ onRegistrationSuccess, onNavigateToDb
           </div>
 
           {/* Gender */}
-          <div className="form-group" style={{ marginBottom: '14px' }}>
+          <div className="form-group" style={{ marginBottom: '16px' }}>
             <label className="form-label">
               Gender <span className="required">*</span>
             </label>
-            <div style={{ display: 'flex', gap: '16px', marginTop: '4px' }}>
+            <div style={{ display: 'flex', gap: '20px', marginTop: '4px' }}>
               {['Male', 'Female', 'Other'].map((g) => (
-                <label key={g} style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.8125rem', cursor: 'pointer', color: 'var(--text-primary)' }}>
+                <label key={g} style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.85rem', cursor: 'pointer', color: 'var(--text-primary)' }}>
                   <input
                     type="radio"
                     name="gender"
@@ -525,233 +589,171 @@ export default function RegistrationView({ onRegistrationSuccess, onNavigateToDb
                     checked={formData.gender === g}
                     onChange={(e) => setFormData({ ...formData, gender: e.target.value })}
                   />
-                  {g}
+                  <span>{g}</span>
                 </label>
               ))}
             </div>
           </div>
 
-          {/* Hobbies with Custom Add option */}
-          <div className="form-group" style={{ marginBottom: '20px' }}>
-            <div className="form-label-row">
-              <span className="form-label">
-                Hobbies &amp; Interests <span className="required">*</span>
-              </span>
-              <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>
-                {formData.hobbies.length} selected
-              </span>
-            </div>
-
-            {/* Hobby Tags */}
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginTop: '4px' }}>
-              {availableHobbies.map((hobby) => {
-                const checked = formData.hobbies.includes(hobby);
-                const isCustom = !DEFAULT_HOBBIES.includes(hobby);
-                return (
-                  <label 
-                    key={hobby} 
-                    style={{ 
-                      display: 'inline-flex', 
-                      alignItems: 'center', 
-                      gap: '6px', 
-                      fontSize: '0.785rem', 
-                      padding: '5px 10px',
-                      borderRadius: 'var(--radius-sm)',
-                      background: checked ? 'rgba(2, 132, 199, 0.15)' : 'var(--bg-primary)',
-                      border: checked ? '1px solid var(--accent-blue)' : '1px solid var(--border-subtle)',
-                      color: checked ? 'var(--accent-cyan)' : 'var(--text-secondary)',
-                      cursor: 'pointer',
-                      transition: 'all 0.15s ease'
-                    }}
-                  >
-                    <input
-                      type="checkbox"
-                      checked={checked}
-                      onChange={() => handleHobbyToggle(hobby)}
-                    />
-                    <span>{hobby}</span>
-                    {isCustom && (
-                      <button
-                        type="button"
-                        onClick={(e) => handleRemoveCustomHobby(hobby, e)}
-                        style={{ background: 'none', border: 'none', color: 'var(--accent-rose)', cursor: 'pointer', display: 'flex', alignItems: 'center', padding: '0 2px' }}
-                        title="Remove custom hobby"
-                      >
-                        <X size={12} />
-                      </button>
-                    )}
-                  </label>
-                );
-              })}
-            </div>
-
-            {/* Add Custom Hobby Input */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '10px' }}>
-              <div style={{ position: 'relative', width: '220px' }}>
-                <input
-                  type="text"
-                  className="form-input"
-                  style={{ fontSize: '0.775rem', padding: '6px 10px' }}
-                  placeholder="Type custom hobby..."
-                  value={customHobbyInput}
-                  onChange={(e) => setCustomHobbyInput(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') {
-                      e.preventDefault();
-                      handleAddCustomHobby();
-                    }
-                  }}
-                />
-              </div>
-              <button
-                type="button"
-                onClick={handleAddCustomHobby}
-                className="btn btn-sm btn-secondary"
-                style={{ padding: '6px 12px', fontSize: '0.75rem' }}
-                title="Add to hobbies list"
-              >
-                <Plus size={12} />
-                Add Hobby
-              </button>
-            </div>
-
-            {errors.hobbies && isSubmitted && <span className="form-error">{errors.hobbies}</span>}
+          {/* Residential Address */}
+          <div className="form-group">
+            <label className="form-label" htmlFor="reg-address">
+              Residential Address <span className="required">*</span>
+            </label>
+            <textarea
+              id="reg-address"
+              rows={2}
+              className={`form-textarea ${(touched.address || isSubmitted) && errors.address ? 'error' : ''}`}
+              placeholder="Enter complete residential address"
+              value={formData.address}
+              onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+              onBlur={() => setTouched({ ...touched, address: true })}
+            />
+            {(touched.address || isSubmitted) && errors.address && <span className="form-error">{errors.address}</span>}
           </div>
 
-          {/* Section 2: Security */}
-          <div style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-muted)', marginBottom: '12px', fontFamily: 'var(--font-mono)' }}>
-            2. ACCOUNT SECURITY
-          </div>
+        </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '14px', marginBottom: '20px' }}>
-            
-            {/* Username */}
-            <div className="form-group">
-              <label className="form-label" htmlFor="reg-username">
-                Portal Username <span className="required">*</span>
-              </label>
-              <input
-                id="reg-username"
-                type="text"
-                className={`form-input ${(touched.username || isSubmitted) && errors.username ? 'error' : touched.username && !errors.username ? 'valid' : ''}`}
-                placeholder="Enter username"
-                value={formData.username}
-                onChange={(e) => setFormData({ ...formData, username: e.target.value.trim() })}
-                onBlur={() => setTouched({ ...touched, username: true })}
-                onKeyDown={(e) => handleKeyDownNext(e, 'reg-password')}
-              />
-              {(touched.username || isSubmitted) && errors.username && <span className="form-error">{errors.username}</span>}
-            </div>
-
-            {/* Password */}
-            <div className="form-group">
-              <div className="form-label-row">
-                <label className="form-label" htmlFor="reg-password">Password <span className="required">*</span></label>
-                <span style={{ fontSize: '0.7rem', color: pwdStrength.color, fontWeight: 600 }}>
-                  {pwdStrength.label}
-                </span>
+        {/* SECTION 3: HOBBIES & INTERESTS */}
+        <div className="card-panel" style={{ padding: '24px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '12px', flexWrap: 'wrap', gap: '8px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <div style={{ width: '34px', height: '34px', borderRadius: 'var(--radius-sm)', background: 'rgba(245, 158, 11, 0.15)', color: 'var(--accent-amber)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                <Heart size={16} />
               </div>
-              <div style={{ position: 'relative' }}>
-                <input
-                  id="reg-password"
-                  type={showPassword ? 'text' : 'password'}
-                  className={`form-input ${(touched.password || isSubmitted) && errors.password ? 'error' : ''}`}
-                  placeholder="Min 6 characters"
-                  style={{ paddingRight: '38px' }}
-                  value={formData.password}
-                  onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                  onBlur={() => setTouched({ ...touched, password: true })}
-                  onKeyDown={(e) => handleKeyDownNext(e, 'reg-confirmpassword')}
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}
-                >
-                  {showPassword ? <EyeOff size={14} /> : <Eye size={14} />}
-                </button>
-              </div>
-              {formData.password && (
-                <div style={{ marginTop: '5px' }}>
-                  <div style={{ display: 'flex', gap: '4px', height: '4px' }}>
-                    {[1, 2, 3].map((step) => (
-                      <div
-                        key={step}
-                        style={{
-                          flex: 1,
-                          borderRadius: '2px',
-                          background: pwdStrength.score >= step ? pwdStrength.color : 'var(--border-subtle)',
-                          transition: 'background 0.2s ease'
-                        }}
-                      />
-                    ))}
-                  </div>
+              <div>
+                <h2 style={{ fontSize: '0.975rem', fontWeight: 700, color: 'var(--text-primary)' }}>
+                  Hobbies &amp; Extracurricular Interests
+                </h2>
+                <div style={{ fontSize: '0.725rem', color: 'var(--text-muted)' }}>
+                  Select one or more interests to bind to database column
                 </div>
-              )}
-              {(touched.password || isSubmitted) && errors.password && <span className="form-error">{errors.password}</span>}
+              </div>
             </div>
 
-            {/* Confirm Password */}
-            <div className="form-group">
-              <label className="form-label" htmlFor="reg-confirmpassword">
-                Confirm Password <span className="required">*</span>
-              </label>
+            <span className="badge badge-amber" style={{ fontSize: '0.7rem' }}>
+              {formData.hobbies.length} Selected
+            </span>
+          </div>
+
+          {/* Hobby Chips */}
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '14px' }}>
+            {availableHobbies.map((hobby) => {
+              const checked = formData.hobbies.includes(hobby);
+              const isCustom = !DEFAULT_HOBBIES.includes(hobby);
+              return (
+                <label 
+                  key={hobby} 
+                  style={{ 
+                    display: 'inline-flex', 
+                    alignItems: 'center', 
+                    gap: '8px', 
+                    fontSize: '0.8125rem', 
+                    fontWeight: 500,
+                    padding: '6px 12px',
+                    borderRadius: 'var(--radius-sm)',
+                    background: checked ? 'linear-gradient(135deg, rgba(2, 132, 199, 0.25) 0%, rgba(99, 102, 241, 0.2) 100%)' : 'var(--bg-primary)',
+                    border: checked ? '1px solid var(--accent-cyan)' : '1px solid var(--border-subtle)',
+                    color: checked ? 'var(--accent-cyan)' : 'var(--text-secondary)',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s ease',
+                    userSelect: 'none'
+                  }}
+                >
+                  <input
+                    type="checkbox"
+                    checked={checked}
+                    onChange={() => handleHobbyToggle(hobby)}
+                  />
+                  <span>{hobby}</span>
+                  {isCustom && (
+                    <button
+                      type="button"
+                      onClick={(e) => handleRemoveCustomHobby(hobby, e)}
+                      style={{ background: 'none', border: 'none', color: 'var(--accent-rose)', cursor: 'pointer', display: 'flex', padding: '0 2px' }}
+                      title="Remove hobby tag"
+                    >
+                      <X size={13} />
+                    </button>
+                  )}
+                </label>
+              );
+            })}
+          </div>
+
+          {/* Add Custom Tag */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <div style={{ maxWidth: '240px', flex: 1 }}>
               <input
-                id="reg-confirmpassword"
-                type={showPassword ? 'text' : 'password'}
-                className={`form-input ${(touched.confirmpassword || isSubmitted) && errors.confirmpassword ? 'error' : touched.confirmpassword && !errors.confirmpassword ? 'valid' : ''}`}
-                placeholder="Confirm password"
-                style={{ paddingRight: '38px' }}
-                value={formData.confirmpassword}
-                onChange={(e) => setFormData({ ...formData, confirmpassword: e.target.value })}
-                onBlur={() => setTouched({ ...touched, confirmpassword: true })}
+                type="text"
+                className="form-input"
+                style={{ fontSize: '0.8rem', padding: '7px 12px' }}
+                placeholder="Type custom hobby tag..."
+                value={customHobbyInput}
+                onChange={(e) => setCustomHobbyInput(e.target.value)}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter') {
-                    handleFormSubmitClick(e);
+                    e.preventDefault();
+                    handleAddCustomHobby();
                   }
                 }}
               />
-              {(touched.confirmpassword || isSubmitted) && errors.confirmpassword && <span className="form-error">{errors.confirmpassword}</span>}
             </div>
-
+            <button
+              type="button"
+              onClick={handleAddCustomHobby}
+              className="btn btn-sm btn-outline"
+              style={{ fontSize: '0.785rem', padding: '7px 12px' }}
+            >
+              <Plus size={13} />
+              Add Tag
+            </button>
           </div>
+          {(touched.hobbies || isSubmitted) && errors.hobbies && <span className="form-error" style={{ marginTop: '8px' }}>{errors.hobbies}</span>}
+        </div>
 
-          {/* Validation Summary Notification */}
-          {isSubmitted && Object.keys(errors).length > 0 && (
-            <div style={{ background: 'rgba(244, 63, 94, 0.08)', border: '1px solid rgba(244, 63, 94, 0.25)', padding: '12px 14px', borderRadius: 'var(--radius-sm)', marginBottom: '18px' }}>
-              <div style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--accent-rose)', display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '4px' }}>
-                <ShieldAlert size={14} />
-                <span>Please correct the following errors</span>
-              </div>
-              <ul style={{ paddingLeft: '20px', fontSize: '0.75rem', color: 'var(--accent-rose)', lineHeight: 1.45 }}>
-                {Object.values(errors).map((err, i) => (
-                  <li key={i}>{err}</li>
-                ))}
-              </ul>
-            </div>
-          )}
+        {/* ACTION BUTTONS TOOLBAR */}
+        <div className="card-panel" style={{ padding: '16px 20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
+          
+          <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+            <button
+              type="button"
+              onClick={() => setShowSampleConfirm(true)}
+              className="btn btn-sm btn-secondary"
+            >
+              <Sparkles size={14} style={{ color: 'var(--accent-amber)' }} />
+              Fill Sample Data
+            </button>
 
-          {/* Action Buttons */}
-          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px', borderTop: '1px solid var(--border-subtle)', paddingTop: '16px' }}>
-            <button type="button" onClick={() => setShowResetConfirm(true)} className="btn btn-outline">
-              <RotateCcw size={13} />
+            <button
+              type="button"
+              onClick={() => setShowResetConfirm(true)}
+              className="btn btn-sm btn-outline"
+            >
+              <RotateCcw size={14} />
               Reset Form
             </button>
-            <button type="submit" className="btn btn-primary">
-              <UserPlus size={14} />
-              Submit Registration
-            </button>
           </div>
 
-        </form>
-      </div>
+          <button
+            type="submit"
+            className="btn btn-primary btn-lg"
+            style={{ padding: '10px 24px', fontSize: '0.875rem' }}
+          >
+            <UserPlus size={16} />
+            Submit Registration
+          </button>
 
-      {/* Confirmation Dialogs */}
+        </div>
+
+      </form>
+
+      {/* Confirmation Modals */}
       <ConfirmModal
         isOpen={showSubmitConfirm}
-        title="Confirm Registration Submission"
-        message={`Are you sure you want to register ${formData.name || 'this user'} as ${formData.usertype} and save the record to dbo.regdb?`}
-        confirmText="Yes, Submit"
+        title="Confirm Student Registration"
+        message={`Save "${formData.name}" (@${formData.username}) to SQL table dbo.regdb?`}
+        confirmText="Yes, Save to Database"
         cancelText="Review Form"
         onConfirm={executeConfirmedSubmit}
         onCancel={() => setShowSubmitConfirm(false)}
@@ -760,21 +762,21 @@ export default function RegistrationView({ onRegistrationSuccess, onNavigateToDb
       <ConfirmModal
         isOpen={showResetConfirm}
         title="Reset Registration Form"
-        message="Are you sure you want to clear all entered fields? Any unsaved data will be lost."
-        confirmText="Yes, Reset"
+        message="Are you sure you want to clear all input fields?"
+        confirmText="Yes, Clear Form"
         cancelText="Cancel"
         isDanger={true}
-        onConfirm={executeConfirmedReset}
+        onConfirm={handleResetForm}
         onCancel={() => setShowResetConfirm(false)}
       />
 
       <ConfirmModal
         isOpen={showSampleConfirm}
-        title="Populate Sample Data"
-        message="Are you sure you want to auto-fill sample registration data? Any current input in the form will be replaced."
-        confirmText="Yes, Auto-Fill"
+        title="Auto-Fill Sample Data"
+        message="Populate the registration form with realistic student data?"
+        confirmText="Yes, Fill Data"
         cancelText="Cancel"
-        onConfirm={executeConfirmedSampleData}
+        onConfirm={handleFillSample}
         onCancel={() => setShowSampleConfirm(false)}
       />
 
