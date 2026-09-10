@@ -145,7 +145,6 @@ export default function Navigation({ activeTab, setActiveTab, currentUser, onLog
               >
                 <div className="mobile-tab-icon-wrapper">
                   <Icon size={18} />
-                  {isActive && <div className="mobile-tab-active-dot" />}
                 </div>
                 <span className="mobile-tab-label">{item.shortLabel}</span>
               </button>
